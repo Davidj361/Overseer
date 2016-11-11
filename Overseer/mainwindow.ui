@@ -31,7 +31,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QListWidget" name="listWidget"/>
+         <widget class="QColumnView" name="columnView"/>
         </item>
        </layout>
       </widget>
