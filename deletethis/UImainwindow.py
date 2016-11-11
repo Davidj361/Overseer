@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dj/School/COMP3000A Fall 2016/project/test/mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.5.1
 #
@@ -19,8 +19,10 @@ class Ui_MainWindow(object):
         self.pushButton.setObjectName("pushButton")
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 400, 25))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 400, 21))
         self.menuBar.setObjectName("menuBar")
+        self.menuChanged_this_menu = QtWidgets.QMenu(self.menuBar)
+        self.menuChanged_this_menu.setObjectName("menuChanged_this_menu")
         MainWindow.setMenuBar(self.menuBar)
         self.mainToolBar = QtWidgets.QToolBar(MainWindow)
         self.mainToolBar.setObjectName("mainToolBar")
@@ -28,6 +30,7 @@ class Ui_MainWindow(object):
         self.statusBar = QtWidgets.QStatusBar(MainWindow)
         self.statusBar.setObjectName("statusBar")
         MainWindow.setStatusBar(self.statusBar)
+        self.menuBar.addAction(self.menuChanged_this_menu.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -36,6 +39,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "WORKS"))
+        self.menuChanged_this_menu.setTitle(_translate("MainWindow", "Changed this menu"))
 
 
 if __name__ == "__main__":
