@@ -7,9 +7,10 @@ class testGui(Ui_MainWindow):
 		Ui_MainWindow.__init__(self)
 		self.setupUi(dialog)
  
-	def addInputTextToListbox(self):
-		txt = self.myTextInput.text()
-		self.listWidget.addItem(txt)
+        # Reference from tutorial
+	# def addInputTextToListbox(self):
+	# 	txt = self.myTextInput.text()
+	# 	self.listWidget.addItem(txt)
     
 
 if __name__ == "__main__":
