@@ -1,30 +1,22 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow
 
-class testGui(Ui_MainWindow):
-	def __init__(self, dialog):
-		Ui_MainWindow.__init__(self)
-		self.setupUi(dialog)
- 
-        # Reference from tutorial
-	# def addInputTextToListbox(self):
-	# 	txt = self.myTextInput.text()
-	# 	self.listWidget.addItem(txt)
-    
+# This is our code that is working off the generated code from pycui5
+class OverseerMainWindow(Ui_MainWindow):
+    def __init__(self):
+        super(OverseerMainWindow, self).__init__()
+
+        # Add local changes below
+
+
 
 if __name__ == "__main__":
-    import sys
-    import time
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    app = QApplication(sys.argv)
+    MainWindow = QMainWindow()
+    ui = OverseerMainWindow()
     ui.setupUi(MainWindow)
+
     MainWindow.show()
-    item = QtWidgets.QListWidgetItem("This is a test.")
-    ui.listWidget.addItem(item)
-    item = QtWidgets.QListWidgetItem("This is a 2nd test.")
-    ui.listWidget.addItem(item)
-    item = QtWidgets.QListWidgetItem("This is a 3rd test.")
-    ui.listWidget.addItem(item)
     sys.exit(app.exec_())
