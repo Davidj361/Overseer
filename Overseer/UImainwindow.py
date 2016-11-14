@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dj/School/COMP3000A Fall 2016/project/Comp3000Group5/Overseer/mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.4.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -15,8 +15,6 @@ class Ui_MainWindow(object):
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         self.centralWidget.setObjectName("centralWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralWidget)
-        self.horizontalLayout.setContentsMargins(11, 11, 11, 11)
-        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.tabWidget = QtWidgets.QTabWidget(self.centralWidget)
         self.tabWidget.setObjectName("tabWidget")
@@ -26,12 +24,10 @@ class Ui_MainWindow(object):
         self.tabProcesses = QtWidgets.QWidget()
         self.tabProcesses.setObjectName("tabProcesses")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tabProcesses)
-        self.verticalLayout.setContentsMargins(11, 11, 11, 11)
-        self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.columnView = QtWidgets.QColumnView(self.tabProcesses)
-        self.columnView.setObjectName("columnView")
-        self.verticalLayout.addWidget(self.columnView)
+        self.listWidget = QtWidgets.QListWidget(self.tabProcesses)
+        self.listWidget.setObjectName("listWidget")
+        self.verticalLayout.addWidget(self.listWidget)
         self.tabWidget.addTab(self.tabProcesses, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -51,7 +47,7 @@ class Ui_MainWindow(object):
         self.statusBar.setObjectName("statusBar")
         MainWindow.setStatusBar(self.statusBar)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 546, 25))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 546, 31))
         self.menuBar.setObjectName("menuBar")
         self.menuFile = QtWidgets.QMenu(self.menuBar)
         self.menuFile.setObjectName("menuFile")
@@ -84,14 +80,4 @@ class Ui_MainWindow(object):
         self.menuOptions.setTitle(_translate("MainWindow", "Options"))
         self.menuView.setTitle(_translate("MainWindow", "View"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 
