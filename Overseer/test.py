@@ -1,4 +1,5 @@
 import sys
+import subprocess
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow
@@ -19,7 +20,12 @@ class OverseerMainWindow(Ui_MainWindow):
     def setupProcessesList(self):
         item = QtGui.QStandardItem("test")
         model = QtGui.QStandardItemModel(9, 7)
-        model.setItem(2,3, item)
+        for i in range(9):
+            for j in range(7):
+                string = str(i) + "," + str(j)
+                item = QtGui.QStandardItem(string)
+                model.setItem(i,j, item)
+        #model.setItem(2,3, item)
         self.tableView.setModel(model)
         self.tableView.verticalHeader().setVisible(False)
 
