@@ -17,61 +17,11 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # Add local changes below
     def setupProcessesList(self):
-        # I have no idea how to get update the model
-        # Even if columnview is not the right class, we need to figure this out
         item = QtGui.QStandardItem("test")
         model = QtGui.QStandardItemModel(9, 7)
         model.setItem(2,3, item)
         self.tableView.setModel(model)
-"""
-class TableModel(QtCore.QAbstractTableModel):
-    def __init__(self, parent=None, *args):
-        super(TableModel, self).__init__()
-        self.datatable = None
-
-    def rowCount(self, parent=QtCore.QModelIndex()):
-        #return len(self.datatable.index)
-        return 5
-        
-    def columnCount(self, parent=QtCore.QModelIndex()):
-        #return len(self.datatable.columns.values)
-        return 3
-
-    def data(self, index, role=QtCore.Qt.DisplayRole):
-        #some from QtDocumentation, but some from website, to get it working.
-        if role == QtCore.Qt.DisplayRole:
-            i = index.row()
-            j = index.column()
-            return "{0}".format(self.datatable.iget_value(i,j))
-        else:
-            return QtCore.QVariant()
-
-    def update(self, inputData):
-        self.datatable = inputData
-
-    #from qt docs well behaved models include
-    def headerData():
-        pass
-
-    #from qt docs, resizable can implement
-    def insertRows():
-        #from qt docs, will need to call beginInsertRows() and endInsertRows()
-        pass
-
-    def insertColumn():
-        #from qt docs, will need to call beginInsertColumns() and endInsertColumns()
-        pass
-
-    def removeRows():
-        #from qt docs, will need to call beginRemoveRows() and endRemoveRows()
-        pass
-
-    def removeColumns():
-        #from qt docs, will need to call beginRemoveColumns() and endRemoveColums()
-        pass
-"""
-    
-
+        self.tableView.verticalHeader().setVisible(False)
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
