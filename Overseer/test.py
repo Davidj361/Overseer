@@ -19,10 +19,11 @@ class OverseerMainWindow(Ui_MainWindow):
     def setupProcessesList(self):
         # I have no idea how to get update the model
         # Even if columnview is not the right class, we need to figure this out
-        
+        item = QtGui.QStandardItem("test")
         model = QtGui.QStandardItemModel(9, 7)
+        model.setItem(2,3, item)
         self.tableView.setModel(model)
-
+"""
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None, *args):
         super(TableModel, self).__init__()
@@ -47,7 +48,7 @@ class TableModel(QtCore.QAbstractTableModel):
 
     def update(self, inputData):
         self.datatable = inputData
-"""
+
     #from qt docs well behaved models include
     def headerData():
         pass
