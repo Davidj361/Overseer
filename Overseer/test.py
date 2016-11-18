@@ -20,7 +20,8 @@ class OverseerMainWindow(Ui_MainWindow):
         # I have no idea how to get update the model
         # Even if columnview is not the right class, we need to figure this out
         
-        self.tableView.setModel(TableModel(self,["test1","test2"]))
+        model = QtGui.QStandardItemModel(9, 7)
+        self.tableView.setModel(model)
 
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None, *args):
