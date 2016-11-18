@@ -1,4 +1,5 @@
 import sys
+import subprocess
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow
@@ -17,7 +18,6 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # Add local changes below
     def setupProcessesList(self):
-        item = QtGui.QStandardItem("test")
         self.model = QtGui.QStandardItemModel(1, 6)
         # Set the labels for the columns
         self.model.setHeaderData(0, 1, "Image Name")
@@ -26,7 +26,13 @@ class OverseerMainWindow(Ui_MainWindow):
         self.model.setHeaderData(3, 1, "CPU")
         self.model.setHeaderData(4, 1, "Memory")
         self.model.setHeaderData(5, 1, "Description")
-        self.model.setItem(2, 3, item)
+        self.tableView.setModel(self.model)
+
+        for i in range(9):
+            for j in range(7):
+                string = str(i) + "," + str(j)
+                item = QtGui.QStandardItem(string)
+                self.model.setItem(i,j, item)
         self.tableView.setModel(self.model)
         self.tableView.verticalHeader().setVisible(False)
 
