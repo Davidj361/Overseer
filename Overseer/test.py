@@ -19,9 +19,8 @@ class OverseerMainWindow(Ui_MainWindow):
     def setupProcessesList(self):
         # I have no idea how to get update the model
         # Even if columnview is not the right class, we need to figure this out
+        
         self.tableView.setModel(TableModel(self,["test1","test2"]))
-        self.tableView
-
 
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None, *args):
@@ -29,10 +28,12 @@ class TableModel(QtCore.QAbstractTableModel):
         self.datatable = None
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        return len(self.datatable.index)
+        #return len(self.datatable.index)
+        return 5
         
     def columnCount(self, parent=QtCore.QModelIndex()):
-        return len(self.datatable.columns.values)
+        #return len(self.datatable.columns.values)
+        return 3
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         #some from QtDocumentation, but some from website, to get it working.
@@ -45,7 +46,6 @@ class TableModel(QtCore.QAbstractTableModel):
 
     def update(self, inputData):
         self.datatable = inputData
-
 """
     #from qt docs well behaved models include
     def headerData():
