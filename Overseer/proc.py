@@ -12,16 +12,16 @@ class Proc:
     # Collect PIDs and statuses from each pid
     def getData(self):
         self.data = []
-        for element in os.listdir(self.proc):
-            if not element.isdigit():
+        for pid in os.listdir(self.proc):
+            if not pid.isdigit():
                 continue
-            # element = int(element) # might not be needed
-            fd = open(self.proc + element + "/status")
+            # pid = int(pid) # might not be needed
+            fd = open(self.proc + pid + "/status")
             for i, line in enumerate(fd):
                 if i == 0:
                     matchObj = re.search("^Name:\s*(.*)$", line)
             fd.close()
-            self.data.append([element,matchObj.group(1)])
+            self.data.append([pid,matchObj.group(1)])
             print(self.data)
 
 # FIXME : DELETEME
