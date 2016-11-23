@@ -22,9 +22,3 @@ class Proc:
                     matchObj = re.search("^Name:\s*(.*)$", line)
             fd.close()
             self.data.append([pid,matchObj.group(1)])
-            print(self.data)
-
-# FIXME : DELETEME
-proc = Proc()
-
-#subprocess.call(["cat", "/proc/meminfo"])
