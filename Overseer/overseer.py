@@ -57,6 +57,10 @@ class OverseerMainWindow(Ui_MainWindow):
             self.model.setItem(i,0, item)
             item = QtGui.QStandardItem(element[1])
             self.model.setItem(i,1, item)
+            item = QtGui.QStandardItem(element[2])
+            self.model.setItem(i,2, item)
+            item = QtGui.QStandardItem(element[4])
+            self.model.setItem(i,4, item)
             i += 1
         self.tableView.setModel(self.model)
         self.tableView.verticalHeader().setVisible(False)

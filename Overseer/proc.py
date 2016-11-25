@@ -16,9 +16,24 @@ class Proc:
             if not pid.isdigit():
                 continue
             # pid = int(pid) # might not be needed
+            #old, using status, not stat
+            """
             fd = open(self.proc + pid + "/status")
             for i, line in enumerate(fd):
                 if i == 0:
-                    matchObj = re.search("^Name:\s*(.*)$", line)
+                    matchName = re.search("^Name:\s*(.*)$", line)
             fd.close()
-            self.data.append([pid,matchObj.group(1)])
+            self.data.append([matchName.group(1),pid, "user"])
+            """
+            fd = open(self.proc + pid + "/stat")
+            item = ""
+            name = ""
+            rss = ""
+            for i, line in enumerate(fd):
+                item = line.split(" ")
+                name = item[1][1:-1]
+                rss = item[23]
+                rssInt = int(rss)
+                rss = str(rssInt*4096)
+            fd.close()
+            self.data.append([name, pid, "user", "", rss])
