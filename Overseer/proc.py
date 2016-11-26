@@ -12,6 +12,17 @@ class Proc:
     # Collect PIDs and statuses from each pid
     def getData(self):
         self.data = []
+        totalMem = 0
+        fd = open(self.proc + "/meminfo")
+        for i, line in enumerate(fd):
+            if i == 0:
+                items = line.split(" ")
+                for j, item in enumerate(items):
+                    if items[j].isdigit():
+                        totalMem = int(items[j])
+            else:
+                break
+        fd.close()
         for pid in os.listdir(self.proc):
             if not pid.isdigit():
                 continue
@@ -33,7 +44,10 @@ class Proc:
                 item = line.split(" ")
                 name = item[1][1:-1]
                 rss = item[23]
-                rssInt = int(rss)
-                rss = str(rssInt*4096)
+                rssNum = int(rss)
+                rssNum = (rssNum*4096)/1024
+                rssNum = rssNum/totalMem
+                rssNum = rssNum*100
+                rss = str(rssNum)
             fd.close()
             self.data.append([name, pid, "user", "", rss])
