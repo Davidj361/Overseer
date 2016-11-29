@@ -1,7 +1,7 @@
 # Comp300Group5
 Trent McNabb &amp; David Jatczak - Task manager
 
-# ** TODO LIST **
+# TODO LIST
 - Make Proc.getTotalMem() more efficient
 - Choose a polling rate and make Proc read its data for that interval
 - Fix decimal places for ram precentage
