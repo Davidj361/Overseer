@@ -7,7 +7,7 @@ from cpu import CPU
 class Proc:
     def __init__(self):
         self.proc = '/proc/'
-        self.processList = []
+        self.processList = {} # Make a dictionary which is a hashtable
         self.cpu = [] # cpu[0] should be the collective info on all CPUs
         self.totalMem = 0
         # Will hold our pids that are inside /proc/ as well as the process's information
@@ -35,20 +35,23 @@ class Proc:
     # FIXME: skip looping and try to acess directly
     def readcpuTimes(self):
         fd = open(self.proc + "/stat")
-        self.cpu = []
+        bufcpu = []
         for i, line in enumerate(fd):
-            # What it looks like: cpu  67188 150 8766 5124308 14884 0 711 0 0 0
-            if i < 5: # Our collective CPU data
+            # What it looks like for the first line: cpu  67188 150 8766 5124308 14884 0 711 0 0 0
+            # Keep checking until cpu isn't the first word so we collected all times for CPUs
+            if re.match("^cpu",line) != None:
                 items = re.split("[\t ]+", line)
                 cpu = CPU(items[1],items[2],items[3],items[4],items[5],items[6],items[7],items[8])
-                self.cpu.append(cpu)
+                bufcpu.append(cpu)
             else:
                 break
         fd.close()
+        # Get our interval from last scan
+        self.cpu = bufcpu
 
     # Collect PIDs and statuses from each pid
     def readProcListData(self):
-        self.processList = []
+        bufprocessList = {}
         for pid in os.listdir(self.proc):
             process = Process()
             if not pid.isdigit():
@@ -75,8 +78,12 @@ class Proc:
 
                 process.utime = item[15]
                 process.stime = item[16]
+
+                # lastTimes = 0
+                # process.cpuPrecentage = (process.utime + process.stime - lastTimes)
             fd.close()
-            self.processList.append(process)
+            bufprocessList[pid] = process
+        self.processList = bufprocessList
 
 
 # FIXME: Delete when done project
