@@ -32,17 +32,22 @@ class OverseerMainWindow(Ui_MainWindow):
         self.model.setHeaderData(5, 1, "Description")
         self.tableView.setModel(self.model)
 
-        i = 0
-        for element in self.proc.data:
-            item = QtGui.QStandardItem(element[0])
+        for i, process in enumerate(self.proc.processList):
+            item = QtGui.QStandardItem(process.name)
             self.model.setItem(i,0, item)
-            item = QtGui.QStandardItem(element[1])
+            item = QtGui.QStandardItem(process.pid)
             self.model.setItem(i,1, item)
-            item = QtGui.QStandardItem(element[2])
+            item = QtGui.QStandardItem("user")
             self.model.setItem(i,2, item)
-            item = QtGui.QStandardItem(element[4])
+            item = QtGui.QStandardItem(process.ramPrecentage)
             self.model.setItem(i,4, item)
-            i += 1
+
+            # FIXME: delete below
+            item = QtGui.QStandardItem(process.utime)
+            self.model.setItem(i,5, item)
+            item = QtGui.QStandardItem(process.stime)
+            self.model.setItem(i,6, item)
+
         self.tableView.setModel(self.model)
         self.tableView.verticalHeader().setVisible(False)
 
