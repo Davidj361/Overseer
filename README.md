@@ -1,6 +1,6 @@
 # Comp300Group5
-### A task manager GUI application for Linux
-**Creators** : Trent McNabb & David Jatczak
+## A task manager GUI application for Linux
+### Created by: Trent McNabb & David Jatczak
 
 # TODO LIST
 - Make Proc.getTotalMem() more efficient
