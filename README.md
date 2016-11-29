@@ -8,5 +8,9 @@ Trent McNabb &amp; David Jatczak - Task manager
 - Have username actually translated to the proper username
 - Implement sending signal via a right-click context menu on a process
 
+## Resources
+
 Read about RAM on Linux
 http://www.linuxatemyram.com/
+CPU usage
+https://github.com/Leo-G/DevopsWiki/wiki/How-Linux-CPU-Usage-Time-and-Percentage-is-calculated
