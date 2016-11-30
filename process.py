@@ -5,5 +5,5 @@ class Process:
         self.rss = ""
         self.utime = ""
         self.stime = ""
-        self.ramPrecentage = 0
-        self.cpuPrecentage = 0
+        self.ramPercentage = 0
+        self.cpuPercentage = 0

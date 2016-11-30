@@ -47,6 +47,8 @@ class Proc:
                 break
         fd.close()
         # Get our interval from last scan
+        # if len(self.cpu) != 0:
+        #     bufcpu[0].period = bufcpu[0].period - self.cpu[0].period
         self.cpu = bufcpu
 
     # Collect PIDs and statuses from each pid
@@ -63,24 +65,30 @@ class Proc:
             process.rss = ""
             process.utime = ""
             process.stime = ""
-            process.ramPrecentage = 0
+            process.ramPercentage = 0
             for i, line in enumerate(fd):
                 # item = line.split(" ") # OLD
                 item = re.split("[\t ]+", line)
                 process.name = item[1][1:-1]
 
                 process.rss = item[23]
-                process.ramPrecentage = int(process.rss)
-                process.ramPrecentage = (process.ramPrecentage*4096)/1024
-                process.ramPrecentage = process.ramPrecentage/self.totalMem
-                process.ramPrecentage = process.ramPrecentage*100
-                process.ramPrecentage = str(process.ramPrecentage)
+                process.ramPercentage = int(process.rss)
+                process.ramPercentage = (process.ramPercentage*4096)/1024
+                process.ramPercentage = process.ramPercentage/self.totalMem
+                process.ramPercentage = process.ramPercentage*100
+                process.ramPercentage = str(process.ramPercentage)
 
-                process.utime = item[15]
-                process.stime = item[16]
+                process.utime = int(item[15])
+                process.stime = int(item[16])
 
-                # lastTimes = 0
-                # process.cpuPrecentage = (process.utime + process.stime - lastTimes)
+                # Did the process exist already from last scan? Setup proper interval for calculation
+                lp = self.processList.get(pid)
+                # FIXME: There's a problem here when using sleep(1)
+                if lp is None:
+                    lastTimes = 0
+                else:
+                    lastTimes = lp.utime + lp.stime
+                process.cpuPercentage = (process.utime + process.stime - lastTimes) / self.cpu[0].period * 100
             fd.close()
             bufprocessList[pid] = process
         self.processList = bufprocessList
@@ -90,5 +98,4 @@ class Proc:
 # For testing proc.py's data gathering
 if __name__ == "__main__":
     proc = Proc()
-    for iter in proc.cpu:
-        print(iter.totaltime)
+    proc.readData()
