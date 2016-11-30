@@ -9,6 +9,7 @@
 - Have username actually translated to the proper username
 - Implement sending signal via a right-click context menu on a process
 - Hook onto Qt's update/refresh method so that it grabs values from our Proc class
+- Have Qt columns be able to sort, get rid delete right-click option in process list
 
 ## Resources
 
