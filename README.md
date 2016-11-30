@@ -4,11 +4,11 @@
 
 # TODO LIST
 - Make Proc.getTotalMem() more efficient
-- Choose a polling rate and make Proc read its data for that interval
+- Choose a polling rate and make Proc read its data for that interval, consider threading or see if the Proc class is on a separate thread
 - Fix decimal places for ram precentage
 - Have username actually translated to the proper username
 - Implement sending signal via a right-click context menu on a process
-- Actually have Qt properly linked (pointer-like) with our Proc class data so data changes on a fly to the gui
+- Hook onto Qt's update/refresh method so that it grabs values from our Proc class
 
 ## Resources
 
