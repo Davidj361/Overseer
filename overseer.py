@@ -63,6 +63,7 @@ class OverseerMainWindow(Ui_MainWindow):
     def readProcessList(self):
         # Erase all of the items in the model and re-add them
         self.processListModel.removeRows(0, self.processListModel.rowCount())
+        self.tableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
         # for i, process in enumerate(proc.processList): # OLD
         for i,(key,value) in enumerate(self.proc.processList.items()):
             item = QtGui.QStandardItem(value.name)
@@ -78,6 +79,7 @@ class OverseerMainWindow(Ui_MainWindow):
             # FIXME: delete below
             item = QtGui.QStandardItem(str(value.cpuPercentage))
             self.processListModel.setItem(i,3, item)
+        self.tableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
 
 # def handler(signum, frame):
 #     print("got signal")
