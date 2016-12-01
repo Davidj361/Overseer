@@ -12,55 +12,71 @@ from proc import Proc # our proc.py class
 # FIXME: Delete below once hooked onto Qt's update/refresh method
 # A demonstration that the data isn't linked with Qt properly
 proc = Proc()
-time.sleep(1)
-proc.readData()
+# time.sleep(1)
+# proc.readData()
+
+
+# We need a separate thread for polling, else we need non-blocking IO reads
+class ProcThread(QtCore.QThread):
+    def __init__(self):
+        super(ProcThread, self).__init__()
 
 class OverseerMainWindow(Ui_MainWindow):
     def __init__(self):
         super(OverseerMainWindow, self).__init__()
 
+        # VARIABLES
         # FIXME: make this uncommented when the model is properly linked
         #self.proc = Proc()
         self.proc = proc
-
         self.app = QApplication(sys.argv)
         self.MainWindow = QMainWindow()
+        self.processListModel = QtGui.QStandardItemModel(1, 6)
+        self.timer = QtCore.QTimer()
+
         self.setupUi(self.MainWindow)
-        self.setupProcessesList()
+        self.configProcessList()
+
+        # This timer will act as timer for polling and for updating the GUI
+        self.timer.timeout.connect(self.updateView)
+        # Every second
+        self.timer.start(1000)
 
     def show(self):
         self.MainWindow.show()
 
-    # Add local changes below
-    def setupProcessesList(self):
-        self.model = QtGui.QStandardItemModel(1, 6)
-        # Set the labels for the columns
-        self.model.setHeaderData(0, 1, "Image Name")
-        self.model.setHeaderData(1, 1, "PID")
-        self.model.setHeaderData(2, 1, "User Name")
-        self.model.setHeaderData(3, 1, "CPU")
-        self.model.setHeaderData(4, 1, "Memory")
-        self.model.setHeaderData(5, 1, "Description")
-        self.tableView.setModel(self.model)
+    def updateView(self):
+        self.readProcessList()
 
+    def configProcessList(self):
+        # Set the labels for the columns
+        self.processListModel.setHeaderData(0, 1, "Image Name")
+        self.processListModel.setHeaderData(1, 1, "PID")
+        self.processListModel.setHeaderData(2, 1, "User Name")
+        self.processListModel.setHeaderData(3, 1, "CPU")
+        self.processListModel.setHeaderData(4, 1, "Memory")
+        self.processListModel.setHeaderData(5, 1, "Description")
+        self.tableView.setModel(self.processListModel)
+        self.tableView.verticalHeader().setVisible(False)
+
+    def readProcessList(self):
+        # Erase all of the items in the model and re-add them
+        self.processListModel.removeRows(0, self.processListModel.rowCount())
         # for i, process in enumerate(proc.processList): # OLD
         for i,(key,value) in enumerate(self.proc.processList.items()):
             item = QtGui.QStandardItem(value.name)
-            self.model.setItem(i,0, item)
+            self.processListModel.setItem(i,0, item)
             item = QtGui.QStandardItem(value.pid)
-            self.model.setItem(i,1, item)
+            self.processListModel.setItem(i,1, item)
             # FIXME: Make this show the proper user name
             item = QtGui.QStandardItem("user")
-            self.model.setItem(i,2, item)
+            self.processListModel.setItem(i,2, item)
             item = QtGui.QStandardItem(value.ramPercentage)
-            self.model.setItem(i,4, item)
+            self.processListModel.setItem(i,4, item)
 
             # FIXME: delete below
             item = QtGui.QStandardItem(str(value.cpuPercentage))
-            self.model.setItem(i,3, item)
-
-        self.tableView.setModel(self.model)
-        self.tableView.verticalHeader().setVisible(False)
+            self.processListModel.setItem(i,3, item)
 
 # def handler(signum, frame):
 #     print("got signal")
