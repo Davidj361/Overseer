@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+\title{Monitoring Memory and CPU Usage for Processes in Linux}
+\author{Jatczak, David \and McNabb, Trent}
+
+\begin{document}
+	
+	\maketitle
+	
+	\section{Introduction}
+	
+	\subsection{Context}
+	Addressing this issue requires knowledge of what information is relevant to the calculation of memory and CPU (Central Processing Unit) resources, and how to get that information. Specifically, knowledge of the Linux '/proc/' file is needed.
+	
+	\subsection{Problem Statement}
+	Computer users who are used to Windows might use Ctrl+Alt+Delete when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, and they might prefer to see the information in a Graphical User Interface (GUI). We would like to write a program that we can make accessible via the Ctrl-Alt-Delete keyboard shortcut that resembles the Windows Task Manager. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
+	
+	\subsection{Result}
+	We have written a program that is called on our system using the Ctrl-Alt-Delete keyboard shortcut. The program uses a GUI to display the running processes and the percentage of CPU resources and memory used by each process. The program allows users to easily select and terminate processes.
+	
+	\subsection{Outline}
+	The rest of this report is structured as follows: Section 2 presents information about calculating system resource usage by specific processes using the Linux '/proc/' file; Section 3 describes the result of the project, which is the program we have written; Section 4 evaluates the result of the project; Section 5 is the conclusion.
+	
+	\section{Background Information}
+	The the Linux '/proc/' file system stores information about processes and also other system information. Each process creates a directory in the '/proc/' file system. (reference the textbook). The directory is created at '/proc/pid/', where pid is the process id number. Each of those directories include a '/proc/pid/stat' file, and a '/proc/pid/statm'. In addition to the information about each process, there is also system information, including a '/proc/cpuinfo' file and a '/proc/meminfo' file.\\
+	The total memory used by a process can be calculated as follows:\\
+	The total system memory can be located:\\
+	The total amount of CPU usage by a process can be calculated as follows:\\
+	The total amount of total CPU capacity can be calculated as follows:\\
+	
+	\section{Result}
+	Result goes here.
+	
+	\section{Evaluation}
+	Evaluation goes here.
+	
+	\section{Conclusion}
+	
+	\subsection{Summary}
+	Summary and highlights.
+	
+	\subsection{Relevance}
+	Relevance with respect to the course topic.
+	
+	\subsection{Future Work}
+	Question for TA -- future work in the field of this project, or ways that the project application itself could be continued on.
+	
+	
+	\setcounter{secnumdepth}{0}
+	\section{Contributions of Team Members}
+	
+	\begin{thebibliography}{3}
+	\end{thebibliography}{}
+
+\end{document}
