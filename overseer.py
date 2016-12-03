@@ -1,7 +1,9 @@
 import sys
 import subprocess
 import signal
-import time
+import time # Timers
+import os
+from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow
@@ -34,6 +36,8 @@ class OverseerMainWindow(Ui_MainWindow):
         self.processListModel = QtGui.QStandardItemModel(1, 6)
         self.timer = QtCore.QTimer()
 
+
+        self.setupStartupFile()
         self.setupUi(self.MainWindow)
         self.configProcessList()
         self.readProcessList()
@@ -80,6 +84,28 @@ class OverseerMainWindow(Ui_MainWindow):
             item = QtGui.QStandardItem(str(value.cpuPercentage))
             self.processListModel.setItem(i,3, item)
         self.tableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
+
+    # Check if this is our first startup, if so, make the program start on startup
+    # This is aimed for only the Ubuntu system
+    def setupStartupFile(self):
+        directory = "~/.config/autostart"
+        directory = os.path.expanduser(directory)
+        startupFileString = "~/.config/autostart/overseer.desktop"
+        startupFileString = os.path.expanduser(startupFileString)
+        startupFile = Path(startupFileString)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        if not startupFile.is_file():
+            fd = open(startupFileString, 'w')
+            fd.write('[Desktop Entry]\n')
+            fd.write('Type=Application\n')
+            fd.write('Name=Overseer\n')
+            overseerLocation = os.path.realpath(__file__)
+            fd.write('Exec=python3 "' + overseerLocation + '"\n')
+            fd.write('Icon=""\n')
+            fd.write('Comment=""\n')
+            fd.write('X-GNOME-Autostart-enabled=true\n')
+            fd.close()
 
 # def handler(signum, frame):
 #     print("got signal")
