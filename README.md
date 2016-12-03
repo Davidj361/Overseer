@@ -8,6 +8,9 @@
 - Fix decimal places for ram precentage
 - Have username actually translated to the proper username
 - Implement sending signal via a right-click context menu on a process
+- Give the program an option to launch on OS's startup
+- Have ctrl-alt-del bring up a dialog to ask if you want to see task manager
+- Have ctrl+shift+esc work as shortcut to bring up task manager
 
 ## Resources
 
