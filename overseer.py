@@ -3,13 +3,12 @@ import subprocess
 import signal
 import time # Timers
 import os
+import types # For changing methods of an instance of a class # Needed for right click menu
 from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
-from UImainwindow import Ui_MainWindow
+from UImainwindow import Ui_MainWindow # This is our code that is working off the generated code from pyuic5
 from proc import Proc # our proc.py class
-
-# This is our code that is working off the generated code from pyuic5
 
 # FIXME: Delete below once hooked onto Qt's update/refresh method
 # A demonstration that the data isn't linked with Qt properly
@@ -17,6 +16,15 @@ proc = Proc()
 # time.sleep(1)
 # proc.readData()
 
+def _hProcessListContextMenuEvent(self, event):
+    menu = QtWidgets.QMenu(self)
+    openFileLocation = menu.addAction("Open File Location")
+    menu.addSeparator()
+    endProcess = menu.addAction("End Process")
+    endProcessTree = menu.addAction("End Process Tree")
+    action = menu.exec_(self.mapToGlobal(event.pos()))
+    if action == openFileLocation:
+        print("open file location action works")
 
 # We need a separate thread for polling, else we need non-blocking IO reads
 class ProcThread(QtCore.QThread):
@@ -35,10 +43,10 @@ class OverseerMainWindow(Ui_MainWindow):
         self.MainWindow = QMainWindow()
         self.processListModel = QtGui.QStandardItemModel(1, 6)
         self.timer = QtCore.QTimer()
+        self.setupStartupFile() # See if Overseer starts on startup
+        self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
+        self.tableView.contextMenuEvent = types.MethodType(_hProcessListContextMenuEvent, self.tableView) # Add a right click menu
 
-
-        self.setupStartupFile()
-        self.setupUi(self.MainWindow)
         self.configProcessList()
         self.readProcessList()
 
