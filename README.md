@@ -8,8 +8,9 @@
 - Fix decimal places for ram precentage
 - Have username actually translated to the proper username
 - Implement sending signal via a right-click context menu on a process
-- Hook onto Qt's update/refresh method so that it grabs values from our Proc class
-- Have Qt columns be able to sort, get rid delete right-click option in process list
+- Give the program an option to launch on OS's startup
+- Have ctrl-alt-del bring up a dialog to ask if you want to see task manager
+- Have ctrl+shift+esc work as shortcut to bring up task manager
 
 ## Resources
 
