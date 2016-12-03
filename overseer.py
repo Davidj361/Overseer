@@ -16,20 +16,32 @@ proc = Proc()
 # time.sleep(1)
 # proc.readData()
 
-def _hProcessListContextMenuEvent(self, event):
-    menu = QtWidgets.QMenu(self)
-    openFileLocation = menu.addAction("Open File Location")
-    menu.addSeparator()
-    endProcess = menu.addAction("End Process")
-    endProcessTree = menu.addAction("End Process Tree")
-    action = menu.exec_(self.mapToGlobal(event.pos()))
-    if action == openFileLocation:
-        print("open file location action works")
+# def test(self):
+#     print(self)
 
-# We need a separate thread for polling, else we need non-blocking IO reads
-class ProcThread(QtCore.QThread):
-    def __init__(self):
-        super(ProcThread, self).__init__()
+def _hProcessListContextMenuEvent(self, event):
+    self.menu = QtWidgets.QMenu(self)
+    openFileLocationAction = QtWidgets.QAction("Open File Location", self)
+    # openFileLocationAction.triggered.connect(test) # another way to add functions onto actions
+    self.menu.addAction(openFileLocationAction)
+    self.menu.addSeparator()
+    endProcessAction = QtWidgets.QAction("End Process", self)
+    self.menu.addAction(endProcessAction)
+    endProcessTreeAction = QtWidgets.QAction("End Process Tree", self)
+    self.menu.addAction(endProcessTreeAction)
+    # self.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
+    action = self.menu.exec_(self.mapToGlobal(event.pos()))
+    selection = self.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
+    pid = self.model().data(self.model().index(selection.row(), 1)) # Get our PID
+    # if action == openFileLocation:
+    #     print("open file location action works")
+
+
+# Uneeded, but for reference
+# # We need a separate thread for polling, else we need non-blocking IO reads
+# class ProcThread(QtCore.QThread):
+#     def __init__(self):
+#         super(ProcThread, self).__init__()
 
 class OverseerMainWindow(Ui_MainWindow):
     def __init__(self):
@@ -45,6 +57,8 @@ class OverseerMainWindow(Ui_MainWindow):
         self.timer = QtCore.QTimer()
         self.setupStartupFile() # See if Overseer starts on startup
         self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
+
+        # It was too much of a hassle to create a custom class and working off generated code, so we're using this hackish fix for a small change
         self.tableView.contextMenuEvent = types.MethodType(_hProcessListContextMenuEvent, self.tableView) # Add a right click menu
 
         self.configProcessList()
@@ -53,7 +67,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # This timer will act as timer for polling and for updating the GUI
         self.timer.timeout.connect(self.updateView)
         # Every second
-        self.timer.start(1000)
+        # self.timer.start(1000) # FIXME: Uncomment when done with right click menu
 
     def show(self):
         self.MainWindow.show()
