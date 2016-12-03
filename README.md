@@ -11,6 +11,7 @@
 - Give the program an option to launch on OS's startup
 - Have ctrl-alt-del bring up a dialog to ask if you want to see task manager
 - Have ctrl+shift+esc work as shortcut to bring up task manager
+- Fix segmentation fault that happens randomly (possibly to do with the startup file creation)
 
 ## Resources
 
