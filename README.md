@@ -12,6 +12,9 @@
 - Have ctrl-alt-del bring up a dialog to ask if you want to see task manager
 - Have ctrl+shift+esc work as shortcut to bring up task manager
 - Fix segmentation fault that happens randomly (possibly to do with the startup file creation)
+- Give the program an icon
+- Make the program close upon ctrl+c or ctrl+d
+- Add exception handling to the startup file creation/writing
 
 ## Resources
 

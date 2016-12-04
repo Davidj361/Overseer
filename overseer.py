@@ -19,22 +19,6 @@ proc = Proc()
 # def test(self):
 #     print(self)
 
-def _hProcessListContextMenuEvent(self, event):
-    self.menu = QtWidgets.QMenu(self)
-    openFileLocationAction = QtWidgets.QAction("Open File Location", self)
-    # openFileLocationAction.triggered.connect(test) # another way to add functions onto actions
-    self.menu.addAction(openFileLocationAction)
-    self.menu.addSeparator()
-    endProcessAction = QtWidgets.QAction("End Process", self)
-    self.menu.addAction(endProcessAction)
-    endProcessTreeAction = QtWidgets.QAction("End Process Tree", self)
-    self.menu.addAction(endProcessTreeAction)
-    # self.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
-    action = self.menu.exec_(self.mapToGlobal(event.pos()))
-    selection = self.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
-    pid = self.model().data(self.model().index(selection.row(), 1)) # Get our PID
-    # if action == openFileLocation:
-    #     print("open file location action works")
 
 
 # Uneeded, but for reference
@@ -59,7 +43,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
 
         # It was too much of a hassle to create a custom class and working off generated code, so we're using this hackish fix for a small change
-        self.tableView.contextMenuEvent = types.MethodType(_hProcessListContextMenuEvent, self.tableView) # Add a right click menu
+        self.tableView.contextMenuEvent = types.MethodType(self._hProcessListContextMenuEvent, self.tableView) # Add a right click menu
 
         self.configProcessList()
         self.readProcessList()
@@ -109,6 +93,7 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # Check if this is our first startup, if so, make the program start on startup
     # This is aimed for only the Ubuntu system
+    # FIXME: Add exception handling to this just to be safe
     def setupStartupFile(self):
         directory = "~/.config/autostart"
         directory = os.path.expanduser(directory)
@@ -128,6 +113,30 @@ class OverseerMainWindow(Ui_MainWindow):
             fd.write('Comment=""\n')
             fd.write('X-GNOME-Autostart-enabled=true\n')
             fd.close()
+
+    # This should be a hidden function. Made it a member function so it could access proc
+    def _hProcessListContextMenuEvent(self, tableView, event):
+        # Define the menu
+        tableView.menu = QtWidgets.QMenu(tableView)
+        openFileLocationAction = QtWidgets.QAction("Open File Location", tableView)
+        # openFileLocationAction.triggered.connect(test) # another way to add functions onto actions
+        tableView.menu.addAction(openFileLocationAction)
+        tableView.menu.addSeparator()
+        endProcessAction = QtWidgets.QAction("End Process", tableView)
+        tableView.menu.addAction(endProcessAction)
+        endProcessTreeAction = QtWidgets.QAction("End Process Tree", tableView)
+        tableView.menu.addAction(endProcessTreeAction)
+
+        # Summon the context menu
+        action = tableView.menu.exec_(tableView.mapToGlobal(event.pos()))
+        # tableView.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
+        selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
+        pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
+        if action == openFileLocationAction:
+            if sys.platform == "linux":
+                subprocess.check_call(['xdg-open', self.proc.processList[pid].path])
+            else:
+                QtWidgets.QMessageBox.about(None, "Warning", "Your system is not running Linux, unable to open a file explorer.")
 
 # def handler(signum, frame):
 #     print("got signal")

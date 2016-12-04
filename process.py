@@ -1,6 +1,9 @@
 class Process:
     def __init__(self):
         self.name = ""
+        self.fullname = ""
+        self.fullpath = ""
+        self.path = ""
         self.pid = 0
         self.rss = ""
         self.utime = ""

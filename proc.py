@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import errno # Need this for comparing exception errors and seeing what type they are
 from process import Process
 from cpu import CPU
 
@@ -58,14 +59,9 @@ class Proc:
             process = Process()
             if not pid.isdigit():
                 continue
-            fd = open(self.proc + pid + "/stat")
-            process.item = ""
             process.pid = pid
-            process.name = ""
-            process.rss = ""
-            process.utime = ""
-            process.stime = ""
             process.ramPercentage = 0
+            fd = open(self.proc + pid + "/stat")
             for i, line in enumerate(fd):
                 # item = line.split(" ") # OLD
                 item = re.split("[\t ]+", line)
@@ -90,6 +86,22 @@ class Proc:
                     lastTimes = lp.utime + lp.stime
                 process.cpuPercentage = (process.utime + process.stime - lastTimes) / self.cpu[0].period * 100
             fd.close()
+            # Get the path of the program
+            try:
+                process.fullpath = os.readlink(self.proc + pid + "/exe") # We use os.system instead of os.readlink because of permission problems and the readlink command handles it ok
+            except PermissionError as err:
+                process.fullpath = "DENIED" # Permission was denied to read /exe
+            # Otherwise, something really bad happened
+            except:
+                print("Unexpected error:", sys.exc_info()[0])
+                raise
+
+            if process.fullpath != "DENIED":
+                # strip the process name off the full path
+                process.path = os.path.dirname(process.fullpath)
+            else:
+                process.fullpath = "DENIED" # Permission was denied to read /exe
+
             bufprocessList[pid] = process
         self.processList = bufprocessList
 
