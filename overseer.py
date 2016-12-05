@@ -54,12 +54,6 @@ def record_callback(reply):
                 local_dpy.record_disable_context(ctx)
                 local_dpy.flush()
                 return
-        # elif event.type == X.ButtonPress:
-        #     print("ButtonPress %s" % event.detail)
-        # elif event.type == X.ButtonRelease:
-        #     print("ButtonRelease %s" % event.detail)
-        # elif event.type == X.MotionNotify:
-        #     print("MotionNotify %i %i" % (event.root_x, event.root_y))
 
 
 # Check if the extension is present
