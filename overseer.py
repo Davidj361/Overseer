@@ -16,8 +16,8 @@ proc = Proc()
 # time.sleep(1)
 # proc.readData()
 
-# def test(self):
-#     print(self)
+def test():
+    print("works")
 
 
 
@@ -29,24 +29,36 @@ proc = Proc()
 
 class OverseerMainWindow(Ui_MainWindow):
     def __init__(self):
-        super(OverseerMainWindow, self).__init__()
+        # super(OverseerMainWindow, self).__init__() # Apparently the arguments are not needed?
+        # super().__init__() # 2nd apparently we didn't need to call the base class's __init__ at all
 
         # VARIABLES
+
+        # Important variables, do not change the order
+        self.app = QApplication(sys.argv)
+        self.MainWindow = QMainWindow()
+        self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
+
         # FIXME: make this uncommented when the model is properly linked
         #self.proc = Proc()
         self.proc = proc
-        self.app = QApplication(sys.argv)
-        self.MainWindow = QMainWindow()
         self.processListModel = QtGui.QStandardItemModel(1, 6)
         self.timer = QtCore.QTimer()
         self.setupStartupFile() # See if Overseer starts on startup
-        self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
 
         # It was too much of a hassle to create a custom class and working off generated code, so we're using this hackish fix for a small change
         self.tableView.contextMenuEvent = types.MethodType(self._hProcessListContextMenuEvent, self.tableView) # Add a right click menu
 
         self.configProcessList()
         self.readProcessList()
+
+        # For reference
+        # QKeySequence(QKeySequence.Print);
+        # QKeySequence(tr("Ctrl+P"));
+        # QKeySequence(tr("Ctrl+p"));
+        # QKeySequence(Qt.CTRL + Qt.Key_P);
+        # QtCore.QObject.connect(QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self.Dialog), QtCore.SIGNAL('activated()'), self.Dialog.close)
+        # QtWidgets.QShortcut(QtGui.QKeySequence("q"), self.MainWindow, test)
 
         # This timer will act as timer for polling and for updating the GUI
         self.timer.timeout.connect(self.updateView)
