@@ -2,6 +2,15 @@
 ## A task manager GUI application for Linux
 ### Created by: Trent McNabb & David Jatczak
 
+# Requirements:
+- Ubuntu 16.04 (Tested on)
+- python3
+- PyQt5
+- xlib for python3, package: python3-xlib
+
+# To Run:
+Go into the main directory of the repo, type into terminal: python3 overseer.py
+
 # TODO LIST
 - Make Proc.getTotalMem() more efficient
 - Choose a polling rate and make Proc read its data for that interval, consider threading or see if the Proc class is on a separate thread
@@ -15,6 +24,7 @@
 - Give the program an icon
 - Make the program close upon ctrl+c or ctrl+d
 - Add exception handling to the startup file creation/writing
+- Add apt-get package names for requirements
 
 ## Resources
 
