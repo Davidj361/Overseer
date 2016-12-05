@@ -18,6 +18,7 @@ Go into the main directory of the repo, type into terminal: python3 overseer.py
 - Implement ending processes in the process's tab
 - Global shortcuts: ctrl+alt+del, ctrl+shift+esc. Have ctrl-alt-del bring up a dialog to ask if you want to see the task manager, have ctrl+shift+esc bring up the task manager without asking
 - Finish CPU usage calculation (it calculates since boot time)
+- Go through all the code and fix the FIXME comments
 - Make CPU and RAM usage properly formatted and readable by the user
 - Have username actually translated to the proper username
 
