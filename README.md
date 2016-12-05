@@ -1,5 +1,5 @@
 # Comp300Group5
-## A task manager GUI application for Linux
+### A task manager GUI application for Linux
 ### Created by: Trent McNabb & David Jatczak
 
 # Requirements:
@@ -12,19 +12,30 @@
 Go into the main directory of the repo, type into terminal: python3 overseer.py
 
 # TODO LIST
-- Make Proc.getTotalMem() more efficient
-- Choose a polling rate and make Proc read its data for that interval, consider threading or see if the Proc class is on a separate thread
-- Fix decimal places for ram precentage
+
+## High Priority
+
+- Implement ending processes in the process's tab
+- Global shortcuts: ctrl+alt+del, ctrl+shift+esc. Have ctrl-alt-del bring up a dialog to ask if you want to see the task manager, have ctrl+shift+esc bring up the task manager without asking
+- Finish CPU usage calculation (it calculates since boot time)
+- Go through all the code and fix the FIXME comments
+- Make CPU and RAM usage properly formatted and readable by the user
 - Have username actually translated to the proper username
-- Implement sending signal via a right-click context menu on a process
-- Give the program an option to launch on OS's startup
-- Have ctrl-alt-del bring up a dialog to ask if you want to see task manager
-- Have ctrl+shift+esc work as shortcut to bring up task manager
-- Fix segmentation fault that happens randomly (possibly to do with the startup file creation)
+
+## Medium Priority
+
 - Give the program an icon
-- Make the program close upon ctrl+c or ctrl+d
+- Finish applications tab
+- Give the program an option to launch on OS's startup (to read for shortcuts)
+- Fix segmentation fault that happens randomly (possibly to do with the startup file creation or how Qt is setup)
+
+## Low Priority
+
 - Add exception handling to the startup file creation/writing
 - Add apt-get package names for requirements
+- Make Proc.getTotalMem() more efficient
+- Make the program close upon ctrl+c or ctrl+d when ran from terminal
+
 
 ## Resources
 
@@ -33,3 +44,5 @@ http://www.linuxatemyram.com/
 
 CPU usage
 https://github.com/Leo-G/DevopsWiki/wiki/How-Linux-CPU-Usage-Time-and-Percentage-is-calculated
+
+CPU usage and RAM usage calculations are based off htop's source code.
