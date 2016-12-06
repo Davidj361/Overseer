@@ -4,11 +4,50 @@ import signal
 import time # Timers
 import os
 import types # For changing methods of an instance of a class # Needed for right click menu
+import xcb
 from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow # This is our code that is working off the generated code from pyuic5
 from proc import Proc # our proc.py class
+
+
+# OLD
+# class KeyPressEater(QtCore.QObject):
+#     # Q_OBJECT
+#     # ...
+#     def __init__(self):
+#         super().__init__()
+# 
+#     def eventFilter(self, obj, event):
+#         if (event.type() == QtCore.QEvent.KeyPress):
+#             keyEvent = QtCore.QKeyEvent(event)
+#             print("Ate key press %d", keyEvent.key())
+#             return true
+#         else:
+#             # standard event processing
+#             return QtCore.QObject.eventFilter(obj, event);
+
+class KeyPressEater(QtCore.QAbstractNativeEventFilter):
+    # Q_OBJECT
+    # ...
+    def __init__(self):
+        super(KeyPressEater, self).__init__()
+
+    # def eventFilter(self, obj, event):
+    #     if (event.type() == QtCore.QEvent.KeyPress):
+    #         keyEvent = QtCore.QKeyEvent(event)
+    #         print("Ate key press %d", keyEvent.key())
+    #         return true
+    #     else:
+    #         # standard event processing
+    #         return QtCore.QObject.eventFilter(obj, event);
+    def nativeEventFilter(self, eventType, message, p=None):
+        if eventType == "xcb_generic_event_t":
+            # ev = xcb_generic_event_t(message);
+            print(message)
+            #// ...
+        return False
 
 # Change path so we find Xlib
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
@@ -85,6 +124,7 @@ proc = Proc()
 # time.sleep(1)
 # proc.readData()
 
+# FIXME: Delete this method when done testing
 def test():
     print("works")
 
@@ -228,7 +268,12 @@ if __name__ == "__main__":
     # signal.signal(signal.SIGALRM, handler)
     # signal.setitimer(signal.ITIMER_REAL, 5)
     ui.show()
-    record_dpy.record_enable_context(ctx, record_callback)
-    # Finally free the context
-    record_dpy.record_free_context(ctx)
+    # record_dpy.record_enable_context(ctx, record_callback)
+    # # Finally free the context
+    # record_dpy.record_free_context(ctx)
+    kp = KeyPressEater()
+    # pushButton->installEventFilter(keyPressEater);
+    # ui.MainWindow.installEventFilter(kp);
+    ui.app.installNativeEventFilter(kp)
+
     sys.exit(ui.app.exec_())
