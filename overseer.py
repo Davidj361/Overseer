@@ -46,14 +46,6 @@ class OverseerMainWindow(Ui_MainWindow):
         self.configProcessList()
         self.readProcessList()
 
-        # For reference
-        # QKeySequence(QKeySequence.Print);
-        # QKeySequence(tr("Ctrl+P"));
-        # QKeySequence(tr("Ctrl+p"));
-        # QKeySequence(Qt.CTRL + Qt.Key_P);
-        # QtCore.QObject.connect(QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self.Dialog), QtCore.SIGNAL('activated()'), self.Dialog.close)
-        # QtWidgets.QShortcut(QtGui.QKeySequence("q"), self.MainWindow, test)
-
         # This timer will act as timer for polling and for updating the GUI
         self.timer.timeout.connect(self.updateView)
         # Every second
@@ -141,9 +133,13 @@ class OverseerMainWindow(Ui_MainWindow):
         pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
         if action == openFileLocationAction:
             if sys.platform == "linux":
-                subprocess.check_call(['xdg-open', self.proc.processList[pid].path])
+                # We need to pass in /dev/null to stdout and stderr so we don't get spam in our main program's stdout and stderr
+                if self.proc.processList[pid].path == "DENIED":
+                    QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You have no permissions to access this file location.")
+                else:
+                    subprocess.run(['xdg-open', self.proc.processList[pid].path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
-                QtWidgets.QMessageBox.about(None, "Warning", "Your system is not running Linux, unable to open a file explorer.")
+                QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "Your system is not running Linux, unable to open a file explorer.")
 
 # FIXME: Remove this when done testing
 # def handler(signum, frame):

@@ -100,7 +100,7 @@ class Proc:
                 # strip the process name off the full path
                 process.path = os.path.dirname(process.fullpath)
             else:
-                process.fullpath = "DENIED" # Permission was denied to read /exe
+                process.path = "DENIED" # Permission was denied to read /exe
 
             bufprocessList[pid] = process
         self.processList = bufprocessList

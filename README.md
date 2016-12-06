@@ -4,7 +4,7 @@
 
 # Requirements:
 - Ubuntu 16.04 (Tested on)
-- python3
+- Python 3.5.2
 - PyQt5
 
 # To Run:
