@@ -11,43 +11,6 @@ from UImainwindow import Ui_MainWindow # This is our code that is working off th
 from proc import Proc # our proc.py class
 
 
-# OLD
-# class KeyPressEater(QtCore.QObject):
-#     # Q_OBJECT
-#     # ...
-#     def __init__(self):
-#         super().__init__()
-# 
-#     def eventFilter(self, obj, event):
-#         if (event.type() == QtCore.QEvent.KeyPress):
-#             keyEvent = QtCore.QKeyEvent(event)
-#             print("Ate key press %d", keyEvent.key())
-#             return true
-#         else:
-#             # standard event processing
-#             return QtCore.QObject.eventFilter(obj, event);
-
-class KeyPressEater(QtCore.QAbstractNativeEventFilter):
-    # Q_OBJECT
-    # ...
-    def __init__(self):
-        super(KeyPressEater, self).__init__()
-
-    # def eventFilter(self, obj, event):
-    #     if (event.type() == QtCore.QEvent.KeyPress):
-    #         keyEvent = QtCore.QKeyEvent(event)
-    #         print("Ate key press %d", keyEvent.key())
-    #         return true
-    #     else:
-    #         # standard event processing
-    #         return QtCore.QObject.eventFilter(obj, event);
-    def nativeEventFilter(self, eventType, message, p=None):
-        if eventType == "xcb_generic_event_t":
-            # ev = xcb_generic_event_t(message);
-            print(message)
-            #// ...
-        return False
-
 # Change path so we find Xlib
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
@@ -127,13 +90,18 @@ proc = Proc()
 def test():
     print("works")
 
+# We need a separate thread for checking if the keyboard shortcut is done
+class ShortcutsThread(QtCore.QThread):
+    # def __init__(self):
+    #     super(ProcThread, self).__init__()
 
+    def run(self):
+        # Enable the context; this only returns after a call to record_disable_context,
+        # while calling the callback function in the meantime
+        record_dpy.record_enable_context(ctx, record_callback) # loops over and over
+        # Finally free the context
+        record_dpy.record_free_context(ctx)
 
-# Uneeded, but for reference
-# # We need a separate thread for polling, else we need non-blocking IO reads
-# class ProcThread(QtCore.QThread):
-#     def __init__(self):
-#         super(ProcThread, self).__init__()
 
 class OverseerMainWindow(Ui_MainWindow):
     def __init__(self):
@@ -267,12 +235,10 @@ if __name__ == "__main__":
     # signal.signal(signal.SIGALRM, handler)
     # signal.setitimer(signal.ITIMER_REAL, 5)
     ui.show()
-    # record_dpy.record_enable_context(ctx, record_callback)
-    # # Finally free the context
-    # record_dpy.record_free_context(ctx)
-    kp = KeyPressEater()
-    # pushButton->installEventFilter(keyPressEater);
-    # ui.MainWindow.installEventFilter(kp);
-    ui.app.installNativeEventFilter(kp)
+
+    # Make a thread for checking for keyboard shortcuts
+    thread = ShortcutsThread()
+    # thread.finished.connect(ui.app.exit) # Uneeded since the thread should be running until the main process ends
+    thread.start()
 
     sys.exit(ui.app.exec_())
