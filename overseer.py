@@ -9,6 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow # This is our code that is working off the generated code from pyuic5
 from proc import Proc # our proc.py class
+import libxcb
 
 
 # OLD
@@ -41,12 +42,12 @@ class KeyPressEater(QtCore.QAbstractNativeEventFilter):
     #     else:
     #         # standard event processing
     #         return QtCore.QObject.eventFilter(obj, event);
-    def nativeEventFilter(self, eventType, message, p=None):
+    def nativeEventFilter(self, eventType, message):
         if eventType == "xcb_generic_event_t":
-            # ev = xcb_generic_event_t(message);
-            print(message)
+            ev = libxcb.xcb_generic_event_t(message);
+            print(ev.response_type)
             #// ...
-        return False
+        return False, 0
 
 # Change path so we find Xlib
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
