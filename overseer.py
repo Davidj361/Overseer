@@ -16,16 +16,10 @@ proc = Proc()
 # time.sleep(1)
 # proc.readData()
 
+# FIXME: Remove this when done testing
 def test():
     print("works")
 
-
-
-# Uneeded, but for reference
-# # We need a separate thread for polling, else we need non-blocking IO reads
-# class ProcThread(QtCore.QThread):
-#     def __init__(self):
-#         super(ProcThread, self).__init__()
 
 class OverseerMainWindow(Ui_MainWindow):
     def __init__(self):
@@ -123,7 +117,8 @@ class OverseerMainWindow(Ui_MainWindow):
             fd.write('Exec=python3 "' + overseerLocation + '"\n')
             fd.write('Icon=""\n')
             fd.write('Comment=""\n')
-            fd.write('X-GNOME-Autostart-enabled=true\n')
+            # Do not make this autostart with the operating system
+            # fd.write('X-GNOME-Autostart-enabled=true\n') 
             fd.close()
 
     # This should be a hidden function. Made it a member function so it could access proc
@@ -150,12 +145,14 @@ class OverseerMainWindow(Ui_MainWindow):
             else:
                 QtWidgets.QMessageBox.about(None, "Warning", "Your system is not running Linux, unable to open a file explorer.")
 
+# FIXME: Remove this when done testing
 # def handler(signum, frame):
 #     print("got signal")
 #     proc.processList[0].utime = 1337
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
+    # FIXME: Remove this when done testing
     # signal.signal(signal.SIGALRM, handler)
     # signal.setitimer(signal.ITIMER_REAL, 5)
     ui.show()

@@ -6,7 +6,6 @@
 - Ubuntu 16.04 (Tested on)
 - python3
 - PyQt5
-- xlib for python3, package: python3-xlib
 
 # To Run:
 Go into the main directory of the repo, type into terminal: python3 overseer.py
