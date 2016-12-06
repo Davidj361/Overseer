@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow # This is our code that is working off the generated code from pyuic5
 from proc import Proc # our proc.py class
-import record # Our xlib code to check for keyboard shortcuts
+from record import Record # Our xlib code to check for keyboard shortcuts
 
 # FIXME: Delete below once hooked onto Qt's update/refresh method
 # A demonstration that the data isn't linked with Qt properly
@@ -23,12 +23,15 @@ def test():
 
 # We need a separate thread for checking if the keyboard shortcut is done
 class ShortcutsThread(QtCore.QThread):
+    def __init__(self):
+        super(ShortcutsThread,self).__init__()
+        self.record = Record()
     def run(self):
         # Enable the context; this only returns after a call to record_disable_context,
         # while calling the callback function in the meantime
-        record.record_dpy.record_enable_context(record.ctx, record.record_callback) # loops over and over
+        self.record.record_dpy.record_enable_context(self.record.ctx, self.record.record_callback) # loops over and over
         # Finally free the context
-        record.record_dpy.record_free_context(record.ctx)
+        self.record.record_dpy.record_free_context(self.record.ctx)
 
 
 class OverseerMainWindow(Ui_MainWindow):
@@ -56,13 +59,6 @@ class OverseerMainWindow(Ui_MainWindow):
         self.configProcessList()
         self.readProcessList()
 
-        # For reference
-        # QKeySequence(QKeySequence.Print);
-        # QKeySequence(tr("Ctrl+P"));
-        # QKeySequence(tr("Ctrl+p"));
-        # QKeySequence(Qt.CTRL + Qt.Key_P);
-        # QtCore.QObject.connect(QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self.Dialog), QtCore.SIGNAL('activated()'), self.Dialog.close)
-        # QtWidgets.QShortcut(QtGui.QKeySequence("q"), self.MainWindow, test)
 
         # This timer will act as timer for polling and for updating the GUI
         self.timer.timeout.connect(self.updateView)
