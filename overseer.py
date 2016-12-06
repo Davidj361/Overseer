@@ -4,7 +4,6 @@ import signal
 import time # Timers
 import os
 import types # For changing methods of an instance of a class # Needed for right click menu
-import xcb
 from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
