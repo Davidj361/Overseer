@@ -72,7 +72,7 @@ class Proc:
                 process.ramPercentage = (process.ramPercentage*4096)/1024
                 process.ramPercentage = process.ramPercentage/self.totalMem
                 process.ramPercentage = process.ramPercentage*100
-                process.ramPercentage = str(process.ramPercentage)
+                process.ramPercentage = "{:.2f}".format(process.ramPercentage)
 
                 process.utime = int(item[15])
                 process.stime = int(item[16])
