@@ -100,8 +100,8 @@ class OverseerMainWindow(Ui_MainWindow):
     # Check if this is our first startup, if so, make the program start on startup
     # This is aimed for only the Ubuntu system
     # FIXME: Add exception handling to this just to be safe
-    def setupStartupFile(self):
-        directory = "~/.config/autostart"
+    def setupUsrBinFile(self):
+        directory = "/usr/bin"
         directory = os.path.expanduser(directory)
         startupFileString = "~/.config/autostart/overseer.desktop"
         startupFileString = os.path.expanduser(startupFileString)
