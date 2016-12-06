@@ -44,8 +44,37 @@ class KeyPressEater(QtCore.QAbstractNativeEventFilter):
     #         return QtCore.QObject.eventFilter(obj, event);
     def nativeEventFilter(self, eventType, message):
         if eventType == "xcb_generic_event_t":
-            ev = libxcb.xcb_generic_event_t(message);
-            print(ev.response_type)
+            # switch (event->response_type & ~0x80):
+            event = libxcb.xcb_generic_event_t(message);
+            if (event.response_type & ~128) == libxcb.XCB_BUTTON_PRESS:
+                print("works")
+            #     xcb_expose_event_t *expose = (xcb_expose_event_t *)event;
+
+            #     printf ("Window %"PRIu32" exposed. Region to be redrawn at location (%"PRIu16",%"PRIu16"), with dimension (%"PRIu16",%"PRIu16")\n",
+            #             expose->window, expose->x, expose->y, expose->width, expose->height );
+            #     break;
+            # }
+            # case XCB_BUTTON_PRESS: {
+            #     xcb_button_press_event_t *bp = (xcb_button_press_event_t *)event;
+            #     print_modifiers (bp->state);
+
+            #     switch (bp->detail) {
+            #     case 4:
+            #         printf ("Wheel Button up in window %"PRIu32", at coordinates (%"PRIi16",%"PRIi16")\n",
+            #                 bp->event, bp->event_x, bp->event_y );
+            #         break;
+            #     case 5:
+            #         printf ("Wheel Button down in window %"PRIu32", at coordinates (%"PRIi16",%"PRIi16")\n",
+            #                 bp->event, bp->event_x, bp->event_y );
+            #         break;
+            #     default:
+            #         printf ("Button %"PRIu8" pressed in window %"PRIu32", at coordinates (%"PRIi16",%"PRIi16")\n",
+            #                 bp->detail, bp->event, bp->event_x, bp->event_y );
+            #         break;
+            #     }
+            #     break;
+            # }
+            # print(ev.response_type)
             #// ...
         return False, 0
 

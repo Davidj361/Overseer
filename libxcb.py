@@ -1,4 +1,5 @@
-# Taken from github.com/samurai-x/samurai-x/blob/master/xpyb-ctypes/xcb/libxcb.py
+# Taken from github.com/samurai-x/samurai-x
+
 
 from ctypes import *
 from ctypes import util
@@ -372,6 +373,8 @@ xcb_poll_for_reply.argtypes = [POINTER(xcb_connection_t), c_uint, POINTER(POINTE
 xcb_popcount = _lib.xcb_popcount
 xcb_popcount.restype = c_int
 xcb_popcount.argtypes = [c_uint32]
+
+XCB_BUTTON_PRESS = 4 	# /usr/include/xcb/xproto.h:493
 
 __all__ = [ \
 # xcb.h
