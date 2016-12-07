@@ -65,6 +65,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.processListModel.setHeaderData(5, 1, "Description")
         self.tableView.setModel(self.processListModel)
         self.tableView.verticalHeader().setVisible(False)
+        self.tableView.horizontalHeader().setHighlightSections(False)
 
     def readProcessList(self):
         # Erase all of the items in the model and re-add them
