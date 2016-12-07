@@ -18,6 +18,10 @@ class OverseerMainWindow(Ui_MainWindow):
         self.MainWindow = QMainWindow()
         self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
 
+        # Hide under development tabs
+        for n in range(4):
+            self.tabWidget.removeTab(2)
+
         self.proc = Proc()
         self.processListModel = QtGui.QStandardItemModel(1, 6)
         self.timer = QtCore.QTimer()
