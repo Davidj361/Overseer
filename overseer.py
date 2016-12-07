@@ -1,6 +1,5 @@
 import sys
 import subprocess
-import signal
 import time # Timers
 import os
 import stat # For making the launch script executable for the shortcut
@@ -12,27 +11,14 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from UImainwindow import Ui_MainWindow # This is our code that is working off the generated code from pyuic5
 from proc import Proc # our proc.py class
 
-# FIXME: Delete below once hooked onto Qt's update/refresh method
-# A demonstration that the data isn't linked with Qt properly
-proc = Proc()
-# time.sleep(1)
-# proc.readData()
-
 class OverseerMainWindow(Ui_MainWindow):
     def __init__(self):
-        # super(OverseerMainWindow, self).__init__() # Apparently the arguments are not needed?
-        # super().__init__() # 2nd apparently we didn't need to call the base class's __init__ at all
-
-        # VARIABLES
-
         # Important variables, do not change the order
         self.app = QApplication(sys.argv)
         self.MainWindow = QMainWindow()
         self.setupUi(self.MainWindow) # This needs to be called before we can reference self.tableView
 
-        # FIXME: make this uncommented when the model is properly linked
-        #self.proc = Proc()
-        self.proc = proc
+        self.proc = Proc()
         self.processListModel = QtGui.QStandardItemModel(1, 6)
         self.timer = QtCore.QTimer()
         # See if this is our first startup. If so, we need to make a bash script to launch this program and add it to unity's shortcuts.
@@ -45,6 +31,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.readProcessList()
 
         # This timer will act as timer for polling and for updating the GUI
+        self.timer.timeout.connect(self.update)
         self.timer.timeout.connect(self.updateView)
         # Every second
         self.timer.start(1000)
@@ -52,6 +39,12 @@ class OverseerMainWindow(Ui_MainWindow):
     def show(self):
         self.MainWindow.show()
 
+    # Update the data and view
+    def update(self):
+        self.proc.readData()
+        self.readProcessList()
+
+    # Update the view depending on what tab we are
     def updateView(self):
         self.readProcessList()
 
@@ -215,15 +208,7 @@ class OverseerMainWindow(Ui_MainWindow):
             else:
                 QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "Your system is not running Linux, unable to open a file explorer.")
 
-# FIXME: Remove this when done testing
-# def handler(signum, frame):
-#     print("got signal")
-#     proc.processList[0].utime = 1337
-
 if __name__ == "__main__":
     ui = OverseerMainWindow()
-    # FIXME: Remove this when done testing
-    # signal.signal(signal.SIGALRM, handler)
-    # signal.setitimer(signal.ITIMER_REAL, 5)
     ui.show()
     sys.exit(ui.app.exec_())

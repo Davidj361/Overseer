@@ -33,14 +33,16 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 - Finish applications tab
 - Finish menubar
 - Have the sort work properly
-- Fix segmentation fault that happens randomly (possibly to do with the startup file creation or how Qt is setup)
+- Fix process time collection to /proc/<PID>/ files where the user has no access
+- Fix segmentation fault that happens randomly when the program is closed (possibly to do with how Qt is setup and configured)
 
 ## Low Priority
 
 - Add exception handling to the startup file creation/writing
 - Add apt-get package names for requirements
 - Make the program close upon ctrl+c or ctrl+d when ran from terminal
-- Add something to the description
+- Add something to the description column in the process list
+- Fix the CPU usage showing 0 sometimes
 
 
 ## Resources

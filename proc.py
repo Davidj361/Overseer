@@ -48,13 +48,18 @@ class Proc:
                 break
         fd.close()
         # Get our interval from last scan
-        # if len(self.cpu) != 0:
-        #     bufcpu[0].period = bufcpu[0].period - self.cpu[0].period
+        if len(self.cpu) != 0:
+            bufcpu[0].period = bufcpu[0].period - self.cpu[0].period
         self.cpu = bufcpu
 
     # Collect PIDs and statuses from each pid
     def readProcListData(self):
         bufprocessList = {}
+        debug = False # Incase we need to check our calculations
+        if debug:
+            print("-----------------------------------")
+            print("            Start of loop          ")
+            print("-----------------------------------")
         for pid in os.listdir(self.proc):
             process = Process()
             if not pid.isdigit():
@@ -65,6 +70,9 @@ class Proc:
             for i, line in enumerate(fd):
                 # item = line.split(" ") # OLD
                 item = re.split("[\t ]+", line)
+                if debug:
+                    for x, iter in enumerate(item):
+                        print("({}) = {}, x={}".format(x+1,iter,x))
                 process.name = item[1][1:-1]
 
                 process.rss = item[23]
@@ -72,20 +80,28 @@ class Proc:
                 process.ramPercentage = (process.ramPercentage*4096)/1024
                 process.ramPercentage = process.ramPercentage/self.totalMem
                 process.ramPercentage = process.ramPercentage*100
+                # Clamp 0 to 100
+                process.ramPercentage = max(0, min(process.ramPercentage, 100))
                 process.ramPercentage = "{:.2f}".format(process.ramPercentage)
 
-                process.utime = int(item[15])
-                process.stime = int(item[16])
+                process.utime = int(item[13])
+                process.stime = int(item[14])
+                if debug:
+                    print("PID {} == {} item[0]".format(pid,item[0]))
+                    print("RSS: {}".format(process.rss))
 
                 # Did the process exist already from last scan? Setup proper interval for calculation
                 lp = self.processList.get(pid)
-                # FIXME: There's a problem here when using sleep(1)
                 if lp is None:
                     lastTimes = 0
                 else:
                     lastTimes = lp.utime + lp.stime
                 process.cpuPercentage = (process.utime + process.stime - lastTimes) / self.cpu[0].period * 100
+                # Clamp 0 to 100
+                process.cpuPercentage = max(0, min(process.cpuPercentage, 100))
                 process.cpuPercentage = "{:.2f}".format(process.cpuPercentage)
+                if debug:
+                    print("PID: {}, {}% = ({} + {} - {}) / {} * 100".format(process.pid,process.cpuPercentage, process.utime, process.stime, lastTimes, self.cpu[0].period))
             fd.close()
             # Get the path of the program
             try:
@@ -105,6 +121,10 @@ class Proc:
 
             bufprocessList[pid] = process
         self.processList = bufprocessList
+        if debug:
+            print("-----------------------------------")
+            print("            End of loop            ")
+            print("-----------------------------------")
 
 
 # FIXME: Delete when done project
