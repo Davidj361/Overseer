@@ -76,8 +76,7 @@ class OverseerMainWindow(Ui_MainWindow):
             self.processListModel.setItem(i,0, item)
             item = QtGui.QStandardItem(value.pid)
             self.processListModel.setItem(i,1, item)
-            # FIXME: Make this show the proper user name
-            item = QtGui.QStandardItem(value.realUid)
+            item = QtGui.QStandardItem(self.proc.userList.getLoginname(value.realUid))
             self.processListModel.setItem(i,2, item)
             item = QtGui.QStandardItem(str(value.cpuPercentage))
             self.processListModel.setItem(i,3, item)

@@ -4,6 +4,7 @@ import re
 import errno # Need this for comparing exception errors and seeing what type they are
 from process import Process
 from cpu import CPU
+from userlist import UserList
 
 class Proc:
     def __init__(self):
@@ -11,10 +12,12 @@ class Proc:
         self.processList = {} # Make a dictionary which is a hashtable
         self.cpu = [] # cpu[0] should be the collective info on all CPUs
         self.totalMem = 0
+        self.userList = UserList()
         # Will hold our pids that are inside /proc/ as well as the process's information
         self.readData()
 
     def readData(self):
+        self.userList = UserList() # Update our user list, never know if a new user is constructed
         self.readTotalMem()
         self.readcpuTimes()
         self.readProcListData()
@@ -72,7 +75,7 @@ class Proc:
                     print("({}) = {}, i={}".format(i+1,line,i))
                 if i == 7:
                     item = re.split("[\t ]+", line)
-                    process.realUid = item[1]
+                    process.realUid = int(item[1])
             fd.close()
             if debug:
                 print("UID = {}".format(process.realUid))
