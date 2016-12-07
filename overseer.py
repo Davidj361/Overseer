@@ -148,17 +148,15 @@ class OverseerMainWindow(Ui_MainWindow):
             # Make a new list for custom-keybindings
             if not (ret.stdout == "@as []\n"):
                 newList = re.sub("]\n$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum) + "/']",ret.stdout)
-                print(newList)
                 newList = re.sub("]$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum+1) + "/']",newList)
-                print(newList)
             else:
                 newList = "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
-                print(newList)
-                newList = re.sub("]$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum+1) + "/']",newList)
-                print(newList)
+                newList = re.sub("]$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']",newList)
             # How it should look
             # gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "[<altered_list>]"
             ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys', 'custom-keybindings', newList],stdout=subprocess.PIPE,universal_newlines=True)
+            # Remove ctrl+shift+del as a shortcut to log out
+            ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys', 'logout', ''],stdout=subprocess.PIPE,universal_newlines=True)
 
             # Example for setting
             # gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name '<newname>'
