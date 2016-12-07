@@ -23,7 +23,6 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 ## High Priority
 
 - Implement ending processes in the process's tab
-- Finish CPU usage calculation (it calculates since boot time)
 - Go through all the code and fix the FIXME comments
 - Have username actually translated to the proper username
 
@@ -33,7 +32,7 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 - Finish applications tab
 - Finish menubar
 - Have the sort work properly
-- Fix process time collection to /proc/<PID>/ files where the user has no access
+- Fix process time collection to /proc/<PID>/ files where the user has no access to read
 - Fix segmentation fault that happens randomly when the program is closed (possibly to do with how Qt is setup and configured)
 
 ## Low Priority
