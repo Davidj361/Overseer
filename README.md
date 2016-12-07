@@ -31,7 +31,7 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 
 - Give the program an icon
 - Finish applications tab
-- Give the program an option to launch on OS's startup (to read for shortcuts)
+- Finish menubar
 - Fix segmentation fault that happens randomly (possibly to do with the startup file creation or how Qt is setup)
 
 ## Low Priority
