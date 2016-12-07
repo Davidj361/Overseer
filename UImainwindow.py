@@ -134,7 +134,6 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionNew_Task_Run)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit_Overseer_2)
-        self.menuOptions.addAction(self.actionBoot_on_Startup)
         self.menuOptions.addAction(self.actionAlways_ontop)
         self.menuView.addAction(self.actionRefresh_Now)
         self.menuView.addAction(self.actionUpdate_Speed)

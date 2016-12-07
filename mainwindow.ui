@@ -189,7 +189,6 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="actionBoot_on_Startup"/>
     <addaction name="actionAlways_ontop"/>
    </widget>
    <widget class="QMenu" name="menuView">
