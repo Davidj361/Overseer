@@ -211,6 +211,10 @@ class OverseerMainWindow(Ui_MainWindow):
             ret = self.proc.processList[pid].endProcess()
             if ret == 1:
                 QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
+        elif action == endProcessTreeAction:
+            ret = self.proc.processList[pid].endProcessTree()
+            if ret == 1:
+                QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
