@@ -27,10 +27,6 @@ class OverseerMainWindow(Ui_MainWindow):
         # It was too much of a hassle to create a custom class and working off generated code, so we're using this hackish fix for a small change
         self.tableView.contextMenuEvent = types.MethodType(self._hProcessListContextMenuEvent, self.tableView) # Add a right click menu
 
-        #connects button to signal.
-        self.endProcessButton.clicked.connect(self.endProcessButtonHandler)
-
-        
         self.configProcessList()
         self.readProcessList()
 
@@ -40,12 +36,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # Every second
         self.timer.start(1000)
 
-    #triggered when the button is pressed. Get the value of teh selected row, gets the pid from that row, and sends the pid to the endProcess function.
-    def endProcessButtonHandler(self):
-        selection = self.tableView.selectionModel().selection().indexes()[0]
-        tableRow = self.processListModel.takeRow(selection.row())
-        pid = int(tableRow[1].text())
-        endProcess(pid)
+        self.endProcessButton.clicked.connect(self._hEndProcessButton)
 
     def show(self):
         self.MainWindow.show()
@@ -218,10 +209,21 @@ class OverseerMainWindow(Ui_MainWindow):
                     subprocess.run(['xdg-open', self.proc.processList[pid].path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
                 QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "Your system is not running Linux, unable to open a file explorer.")
+        elif action == endProcessAction:
+            ret = self.proc.processList[pid].endProcess()
+            if ret == 1:
+                QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
+        elif action == endProcessTreeAction:
+            ret = self.proc.processList[pid].endProcessTree()
+            if ret == 1:
+                QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
 
-#kills a process, the pid.
-def endProcess(pid):
-    os.kill(pid, 9)
+    # This should be a hidden function. Made it a member function so it could access proc
+    def _hEndProcessButton(self):
+        pid = self.getSelectedProcessPID(self.tableView)
+        ret = self.proc.processList[pid].endProcess()
+        if ret == 1:
+            QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
