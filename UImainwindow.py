@@ -35,6 +35,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.setSpacing(6)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.tableView = QtWidgets.QTableView(self.tabProcesses)
+        self.tableView.setAutoScroll(False)
         self.tableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableView.setProperty("showDropIndicator", False)
         self.tableView.setDragDropOverwriteMode(False)

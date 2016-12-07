@@ -38,6 +38,9 @@
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0" colspan="2">
          <widget class="QTableView" name="tableView">
+          <property name="autoScroll">
+           <bool>false</bool>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>

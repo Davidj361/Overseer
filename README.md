@@ -40,6 +40,7 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 - Add exception handling to the startup file creation/writing
 - Add apt-get package names for requirements
 - Make the program close upon ctrl+c or ctrl+d when ran from terminal
+- Add something to the description
 
 
 ## Resources

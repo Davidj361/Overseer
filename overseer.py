@@ -68,12 +68,10 @@ class OverseerMainWindow(Ui_MainWindow):
         self.tableView.horizontalHeader().setHighlightSections(False)
 
     def readProcessList(self):
-        # Get the PID if there is a selection so the selection stays
         pid = self.getSelectedProcessPID(self.tableView)
         # Erase all of the items in the model and re-add them
         self.processListModel.removeRows(0, self.processListModel.rowCount())
         self.tableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
-        # for i, process in enumerate(proc.processList): # OLD
         for i,(key,value) in enumerate(self.proc.processList.items()):
             item = QtGui.QStandardItem(value.name)
             self.processListModel.setItem(i,0, item)
@@ -87,6 +85,16 @@ class OverseerMainWindow(Ui_MainWindow):
             item = QtGui.QStandardItem(value.ramPercentage)
             self.processListModel.setItem(i,4, item)
         self.tableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
+        # Another hack fix for keeping selection
+        # It adds more strain to the thread
+        if pid != -1:
+            for index in range(1, self.tableView.model().rowCount() + 1):
+                self.tableView.selectRow(index)
+                if self.tableView.selectionModel().selection().indexes()[1].data() == pid:
+                    # If the previously selected item is found, leave
+                    return
+            # If we are still here, the old item wasn't found, so deselect all
+            self.tableView.clearSelection()
 
     # Returns -1 if no selection or PID couldn't be found, or returns PID
     def getSelectedProcessPID(self, tableView):
