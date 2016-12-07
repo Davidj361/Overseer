@@ -32,13 +32,13 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 - Give the program an icon
 - Finish applications tab
 - Finish menubar
+- Have the sort work properly
 - Fix segmentation fault that happens randomly (possibly to do with the startup file creation or how Qt is setup)
 
 ## Low Priority
 
 - Add exception handling to the startup file creation/writing
 - Add apt-get package names for requirements
-- Make Proc.getTotalMem() more efficient
 - Make the program close upon ctrl+c or ctrl+d when ran from terminal
 
 

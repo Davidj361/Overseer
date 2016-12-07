@@ -47,7 +47,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # This timer will act as timer for polling and for updating the GUI
         self.timer.timeout.connect(self.updateView)
         # Every second
-        # self.timer.start(1000) # FIXME: Uncomment when done with right click menu
+        self.timer.start(1000)
 
     def show(self):
         self.MainWindow.show()
@@ -68,6 +68,8 @@ class OverseerMainWindow(Ui_MainWindow):
         self.tableView.horizontalHeader().setHighlightSections(False)
 
     def readProcessList(self):
+        # Get the PID if there is a selection so the selection stays
+        pid = self.getSelectedProcessPID(self.tableView)
         # Erase all of the items in the model and re-add them
         self.processListModel.removeRows(0, self.processListModel.rowCount())
         self.tableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
@@ -80,13 +82,20 @@ class OverseerMainWindow(Ui_MainWindow):
             # FIXME: Make this show the proper user name
             item = QtGui.QStandardItem("user")
             self.processListModel.setItem(i,2, item)
-            item = QtGui.QStandardItem(value.ramPercentage)
-            self.processListModel.setItem(i,4, item)
-
-            # FIXME: delete below
             item = QtGui.QStandardItem(str(value.cpuPercentage))
             self.processListModel.setItem(i,3, item)
+            item = QtGui.QStandardItem(value.ramPercentage)
+            self.processListModel.setItem(i,4, item)
         self.tableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
+
+    # Returns -1 if no selection or PID couldn't be found, or returns PID
+    def getSelectedProcessPID(self, tableView):
+        pid = -1
+        indexes = tableView.selectionModel().selection().indexes()
+        if len(indexes) != 0:
+            selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
+            pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
+        return pid
 
     # Check if this is our first startup, if so, make the program start on startup
     # This is aimed for only the Ubuntu system
@@ -185,8 +194,9 @@ class OverseerMainWindow(Ui_MainWindow):
         # Summon the context menu
         action = tableView.menu.exec_(tableView.mapToGlobal(event.pos()))
         # tableView.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
-        selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
-        pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
+        pid = self.getSelectedProcessPID(tableView)
+        if pid == -1:
+            return
         if action == openFileLocationAction:
             if sys.platform == "linux":
                 # We need to pass in /dev/null to stdout and stderr so we don't get spam in our main program's stdout and stderr
