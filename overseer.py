@@ -207,6 +207,10 @@ class OverseerMainWindow(Ui_MainWindow):
                     subprocess.run(['xdg-open', self.proc.processList[pid].path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
                 QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "Your system is not running Linux, unable to open a file explorer.")
+        elif action == endProcessAction:
+            ret = self.proc.processList[pid].endProcess()
+            if ret == 1:
+                QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
