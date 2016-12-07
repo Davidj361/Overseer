@@ -66,6 +66,12 @@ class Proc:
                 continue
             process.pid = pid
             process.ramPercentage = 0
+            fd = open(self.proc + pid + "/status")
+            for i, line in enumerate(fd):
+                if i == 7:
+                    item = re.split("[\t ]+", line)
+                    process.realUid = item[1]
+            fd.close()
             fd = open(self.proc + pid + "/stat")
             for i, line in enumerate(fd):
                 # item = line.split(" ") # OLD

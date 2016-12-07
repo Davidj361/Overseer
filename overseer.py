@@ -77,13 +77,16 @@ class OverseerMainWindow(Ui_MainWindow):
             item = QtGui.QStandardItem(value.pid)
             self.processListModel.setItem(i,1, item)
             # FIXME: Make this show the proper user name
-            item = QtGui.QStandardItem("user")
+            item = QtGui.QStandardItem(value.realUid)
             self.processListModel.setItem(i,2, item)
             item = QtGui.QStandardItem(str(value.cpuPercentage))
             self.processListModel.setItem(i,3, item)
             item = QtGui.QStandardItem(value.ramPercentage)
             self.processListModel.setItem(i,4, item)
         self.tableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
+        #causes deselecting problem when sorting.
+        #self.processListModel.sort(4, 1)
+    
         # Another hack fix for keeping selection
         # It adds more strain to the thread
         if pid != -1:
@@ -94,6 +97,7 @@ class OverseerMainWindow(Ui_MainWindow):
                     return
             # If we are still here, the old item wasn't found, so deselect all
             self.tableView.clearSelection()
+            
 
     # Returns -1 if no selection or PID couldn't be found, or returns PID
     def getSelectedProcessPID(self, tableView):

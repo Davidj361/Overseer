@@ -12,6 +12,7 @@ class Process:
         self.stime = ""
         self.ramPercentage = 0
         self.cpuPercentage = 0
+        self.realUid = ""
 
     # Force kill the process
     def endProcess(self):
