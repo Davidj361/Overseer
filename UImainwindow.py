@@ -40,6 +40,8 @@ class Ui_MainWindow(object):
         self.tableView.setDragDropOverwriteMode(False)
         self.tableView.setSortingEnabled(True)
         self.tableView.setObjectName("tableView")
+        self.tableView.horizontalHeader().setDefaultSectionSize(120)
+        self.tableView.horizontalHeader().setStretchLastSection(True)
         self.tableView.verticalHeader().setSortIndicatorShown(True)
         self.gridLayout_5.addWidget(self.tableView, 0, 0, 1, 2)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

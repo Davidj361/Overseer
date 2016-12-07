@@ -85,6 +85,7 @@ class Proc:
                 else:
                     lastTimes = lp.utime + lp.stime
                 process.cpuPercentage = (process.utime + process.stime - lastTimes) / self.cpu[0].period * 100
+                process.cpuPercentage = "{:.2f}".format(process.cpuPercentage)
             fd.close()
             # Get the path of the program
             try:
