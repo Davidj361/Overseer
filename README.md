@@ -8,7 +8,11 @@
 - PyQt5
 
 # To Run:
-Go into the main directory of the repo, type into terminal: python3 overseer.py
+Clone or download the repository. Rename and move the repository folder as however you like.
+Go into the main directory of the repository, type into terminal: python3 overseer.py
+It should create a bash script as ~/openOverseer.sh, and you should get your logout shortcut disabled while 2 shortcuts are made in Ubuntu.
+If you want to move the repository folder, just delete ~/openOverseer and the Overseer shortcuts and rerun overseer.py.
+Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Escape just don't work.
 
 # TODO LIST
 
