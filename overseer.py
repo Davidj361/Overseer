@@ -146,7 +146,16 @@ class OverseerMainWindow(Ui_MainWindow):
                     found = True
         if not found:
             # Make a new list for custom-keybindings
-            newList = re.sub("]\n$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum) + "/']",ret.stdout)
+            if not (ret.stdout == "@as []\n"):
+                newList = re.sub("]\n$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum) + "/']",ret.stdout)
+                print(newList)
+                newList = re.sub("]$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum+1) + "/']",newList)
+                print(newList)
+            else:
+                newList = "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+                print(newList)
+                newList = re.sub("]$",", '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom" + str(matchNum+1) + "/']",newList)
+                print(newList)
             # How it should look
             # gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "[<altered_list>]"
             ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys', 'custom-keybindings', newList],stdout=subprocess.PIPE,universal_newlines=True)
@@ -155,7 +164,11 @@ class OverseerMainWindow(Ui_MainWindow):
             # gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name '<newname>'
             ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum) + '/', 'name', 'Overseer'],stdout=subprocess.PIPE,universal_newlines=True)
             ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum) + '/', 'command', launchScriptString],stdout=subprocess.PIPE,universal_newlines=True)
-            ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum) + '/', 'binding', '<Alt>b'],stdout=subprocess.PIPE,universal_newlines=True)
+            ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum) + '/', 'binding', '<Primary><Shift>Escape'],stdout=subprocess.PIPE,universal_newlines=True)
+
+            ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum+1) + '/', 'name', 'Overseer'],stdout=subprocess.PIPE,universal_newlines=True)
+            ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum+1) + '/', 'command', launchScriptString],stdout=subprocess.PIPE,universal_newlines=True)
+            ret2 = subprocess.run(['gsettings', 'set', 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom' + str(matchNum+1) + '/', 'binding', '<Primary><Alt>Delete'],stdout=subprocess.PIPE,universal_newlines=True)
 
     # This should be a hidden function. Made it a member function so it could access proc
     def _hProcessListContextMenuEvent(self, tableView, event):
