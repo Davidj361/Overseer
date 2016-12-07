@@ -27,6 +27,10 @@ class OverseerMainWindow(Ui_MainWindow):
         # It was too much of a hassle to create a custom class and working off generated code, so we're using this hackish fix for a small change
         self.tableView.contextMenuEvent = types.MethodType(self._hProcessListContextMenuEvent, self.tableView) # Add a right click menu
 
+        #connects button to signal.
+        self.endProcessButton.clicked.connect(self.endProcessButtonHandler)
+
+        
         self.configProcessList()
         self.readProcessList()
 
@@ -35,6 +39,13 @@ class OverseerMainWindow(Ui_MainWindow):
         self.timer.timeout.connect(self.updateView)
         # Every second
         self.timer.start(1000)
+
+    #triggered when the button is pressed. Get the value of teh selected row, gets the pid from that row, and sends the pid to the endProcess function.
+    def endProcessButtonHandler(self):
+        selection = self.tableView.selectionModel().selection().indexes()[0]
+        tableRow = self.processListModel.takeRow(selection.row())
+        pid = int(tableRow[1].text())
+        endProcess(pid)
 
     def show(self):
         self.MainWindow.show()
@@ -207,6 +218,10 @@ class OverseerMainWindow(Ui_MainWindow):
                     subprocess.run(['xdg-open', self.proc.processList[pid].path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
                 QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "Your system is not running Linux, unable to open a file explorer.")
+
+#kills a process, the pid.
+def endProcess(pid):
+    os.kill(pid, 9)
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
