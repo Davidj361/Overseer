@@ -1,5 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage{hyperref}
+\usepackage{graphicx}
 \title{Monitoring Memory and CPU Usage for Processes in Linux}
 \author{Jatczak, David \and McNabb, Trent}
 
@@ -22,7 +23,7 @@
 	The rest of this report is structured as follows: Section 2 presents information about calculating system resource usage by specific processes using the Linux '/proc/' file; Section 3 describes the result of the project, which is the program we have written; Section 4 evaluates the result of the project; Section 5 is the conclusion.
 	
 	\section{Background Information}
-	The Linux '/proc/' file system stores information about processes and also other system information. Each process has a directory in the '/proc/' file system (reference the textbook). The directory is created at '/proc/[pid]/', where pid is the process identification number. Each of these directories include a 'stat' file, and a 'statm'. In addition to the information about each process, there is also system information, i.e. the '/proc/cpuinfo' file and the '/proc/meminfo' file.\\
+	The Linux '/proc/' file system stores information about processes and also other system information. Each process has a directory in the '/proc/' file system\cite[p. 792]{text}. The directory is created at '/proc/[pid]/', where pid is the process identification number. Each of these directories include a 'stat' file, and a 'statm'. In addition to the information about each process, there is also system information, i.e. the '/proc/cpuinfo' file and the '/proc/meminfo' file.\\
 	The total memory used by a process can be calculated as follows:\\
 	The total system memory can be located:\\
 	The total amount of CPU usage by a process can be calculated as follows:\\
@@ -59,6 +60,8 @@ The Qt framework has an event loop. The Qt framework receives its events from X1
 	
 	\begin{thebibliography}{3}
 	 \bibitem{QtSlides}\url{http://github.com/boostcon/cppnow_presentations_2013/blob/master/mon/qt_event_loop.pdf?raw=true}
+	\bibitem{manProc}\url{http://man7.org/linux/man-pages/man5/proc.5.html}
+	\bibitem{text}{Tanenbaum, A. S. (2015). \emph{Modern operating systems.}}
 	\end{thebibliography}{}
 
 \end{document}
