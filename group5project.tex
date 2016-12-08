@@ -29,10 +29,17 @@
 	If we divide that by the total amount of memory used by the system, that will give us the percentage of system memory used by the process.
 	The calculation is:\\
 	(Resident Set Size * Page Size)/(Total System Memory.)\\
-	The total memory used by a process can be calculated as follows:\\
-	The total system memory can be located:\\
-	The total amount of CPU usage by a process can be calculated as follows:\\
-	The total amount of total CPU capacity can be calculated as follows:\\
+	Information about the resident set size of a process can be found is '/proc/status/statm' \cite{manProc}.
+	Information about the total system memory can be found in '/proc/meminfo' \cite{manProc}.\\
+
+A CPU can either be running or idle.
+If it is running, it can be running a user space program, or running the kernel \cite{scoutBlog}.
+If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.
+The percentage of CPU usage by a process is the amount of time that the CPU is running that specific process, divided by the Total CPU availability multiplied by 100.
+The percentage of total CPU usage is the amount of usage, divided the total CPU amount, multiplied by 100, where the amount of usage is the time running user space programs plus the time running kernel space programs.\\
+The amount of time that a process has been running in user mode can be found in '/proc/pid/stat'. \cite{manProc}
+The total time spent by the CPU running user space processeses and the amount of time running the kernel can be found in '/proc/stat' \cite{manProc}.\\
+	
 	
 Shortcuts, also known as hotkeys, that give functionality to applications are typically handled by an event handler.
 Whenever a user presses a key on an operating system, an event is made and sent out for the event handlers to handle.
@@ -80,6 +87,7 @@ Both of these libraries communicate with X11 via binary because X11 uses a clien
 	\bibitem{QtSlides} Thiago Macieira - Qt Core Maintainer \url{http://github.com/boostcon/cppnow_presentations_2013/blob/master/mon/qt_event_loop.pdf?raw=true}
 	\bibitem{manProc}\url{http://man7.org/linux/man-pages/man5/proc.5.html}
 	\bibitem{text}{Tanenbaum, A. S. (2015). \emph{Modern operating systems.}}
+	\bibitem{scoutBlog}\url{http://blog.scoutapp.com/articles/2015/02/24/understanding-linuxs-cpu-stats}
 	\end{thebibliography}{}
 
 \end{document}
