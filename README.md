@@ -27,7 +27,7 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 ## High Priority
 
 - Go through all the code and fix the FIXME comments
-- Finish menubar
+- Add total CPU and RAM usage at the bottom of the window
 - Give the program an icon
 
 ## Medium Priority
