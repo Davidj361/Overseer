@@ -24,11 +24,11 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 ## High Priority
 
 - Go through all the code and fix the FIXME comments
+- Fix the reselection bug of the first item in the list
 
 ## Medium Priority
 
 - Give the program an icon
-- Finish applications tab
 - Finish menubar
 - Have the sort work properly
 - Fix process time collection to /proc/<PID>/ files where the user has no access to read
