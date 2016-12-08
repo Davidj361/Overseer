@@ -31,6 +31,7 @@ class OverseerMainWindow(Ui_MainWindow):
 
         # It was too much of a hassle to create a custom class and working off generated code, so we're using this hackish fix for a small change
         self.tableView.contextMenuEvent = types.MethodType(self._hProcessListContextMenuEvent, self.tableView) # Add a right click menu
+        self.appTableView.contextMenuEvent = types.MethodType(self._hApplicationListContextMenuEvent, self.appTableView) # Add a right click menu
 
         self.configProcessList()
         self.configApplicationsList()
@@ -247,7 +248,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # Summon the context menu
         action = tableView.menu.exec_(tableView.mapToGlobal(event.pos()))
         # tableView.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
-        pid = self.getSelectedPID(tableView)
+        pid = self.getSelectedPID(tableView, 1)
         if pid == -1:
             return
         if action == openFileLocationAction:
@@ -268,6 +269,27 @@ class OverseerMainWindow(Ui_MainWindow):
             if ret == 1:
                 QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
 
+    def _hApplicationListContextMenuEvent(self, tableView, event):
+        # Define the menu
+        tableView.menu = QtWidgets.QMenu(tableView)
+        switchToAction = QtWidgets.QAction("Switch To", tableView)
+        tableView.menu.addAction(switchToAction)
+        endTaskAction = QtWidgets.QAction("End Task", tableView)
+        tableView.menu.addAction(endTaskAction)
+
+        # Summon the context menu
+        action = tableView.menu.exec_(tableView.mapToGlobal(event.pos()))
+        # tableView.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
+        pid = self.getSelectedPID(tableView, 2)
+        if pid == -1:
+            return
+        if action == switchToAction:
+            self.proc.processList[pid].switchTo()
+        elif action == endTaskAction:
+            ret = self.proc.processList[pid].endTask()
+            if ret == 1:
+                QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
+
     # This should be a hidden function. Made it a member function so it could access proc
     def _hEndProcessButton(self):
         pid = self.getSelectedPID(self.tableView)
@@ -282,7 +304,8 @@ class OverseerMainWindow(Ui_MainWindow):
             QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
 
     def _hSwitchToButton(self):
-        1
+        pid = self.getSelectedPID(self.appTableView, 2)
+        self.proc.processList[pid].switchTo()
 
     def _hNewTaskButton(self):
         1
