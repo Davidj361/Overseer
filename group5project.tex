@@ -23,7 +23,12 @@
 	The rest of this report is structured as follows: Section 2 presents information about calculating system resource usage by specific processes using the Linux '/proc/' file; Section 3 describes the result of the project, which is the program we have written; Section 4 evaluates the result of the project; Section 5 is the conclusion.
 	
 	\section{Background Information}
-	The Linux '/proc/' file system stores information about processes and also other system information. Each process has a directory in the '/proc/' file system\cite[p. 792]{text}. The directory is created at '/proc/[pid]/', where pid is the process identification number. Each of these directories include a 'stat' file a 'statm' file, and a '/status' file. In addition to the information about each process, there is also system information, i.e. the '/proc/cpuinfo' file and the '/proc/meminfo' file.\\
+	The Linux '/proc/' file system stores information about processes and also other system information. Each process has a directory in the '/proc/' file system\cite[p. 792]{text}. The directory is created at '/proc/[pid]/', where pid is the process identification number. Each of these directories include a 'stat' file, a 'statm' file, and a '/status' file. In addition to the information about each process, there is also system information, i.e. the '/proc/cpuinfo' file and the '/proc/meminfo' file.\\
+	The Resident Set Size in the number of pages that the system currently has in real memory.
+	If we multiply that by the page size, that gives the amount of RAM currently used by the process.
+	If we divide that by the total amount of memory used by the system, that will give us the percentage of system memory used by the process.
+	The calculation is:\\
+	(Resident Set Size * Page Size)/(Total System Memory.)\\
 	The total memory used by a process can be calculated as follows:\\
 	The total system memory can be located:\\
 	The total amount of CPU usage by a process can be calculated as follows:\\
