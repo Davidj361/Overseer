@@ -23,7 +23,6 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 ## High Priority
 
 - Go through all the code and fix the FIXME comments
-- Have username actually translated to the proper username
 
 ## Medium Priority
 

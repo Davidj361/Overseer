@@ -13,6 +13,8 @@ class Process:
         self.ramPercentage = 0
         self.cpuPercentage = 0
         self.realUid = 0
+        self.state = ""
+        self.fullState = ""
 
     # Force kill the process
     def endProcess(self):
@@ -39,3 +41,28 @@ class Process:
             return 0
         else:
             return 1 # Indicate an error
+
+    # Read 'man proc' and see /proc/[pid]/stat for more information
+    def setFullState(self):
+        if self.state == "R":
+            self.fullState = "Running"
+        elif self.state == "S":
+            self.fullState = "Sleeping"
+        elif self.state == "D":
+            self.fullState = "Waiting"
+        elif self.state == "Z":
+            self.fullState = "Zombie"
+        elif self.state == "T":
+            self.fullState = "Stopped"
+        elif self.state == "t":
+            self.fullState = "Tracing stop"
+        elif self.state == "W":
+            self.fullState = "Waking or paging"
+        elif self.state == "X":
+            self.fullState = "Dead"
+        elif self.state == "x":
+            self.fullState = "Dead"
+        elif self.state == "P":
+            self.fullState = "Parked"
+        else:
+            self.fullState = ""

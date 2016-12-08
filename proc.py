@@ -87,6 +87,8 @@ class Proc:
                     for x, iter in enumerate(item):
                         print("({}) = {}, x={}".format(x+1,iter,x))
                 process.name = item[1][1:-1]
+                process.state = item[2]
+                process.setFullState()
 
                 process.rss = item[23]
                 process.ramPercentage = int(process.rss)
