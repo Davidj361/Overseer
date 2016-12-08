@@ -6,6 +6,7 @@
 - Ubuntu 16.04 (Tested on)
 - Python 3.5.2
 - PyQt5
+- wmctrl (Needed for seeing what windows are open on the linux window manager)
 
 # To Run:
 Clone or download the repository. Rename and move the repository folder as however you like.

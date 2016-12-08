@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import errno # Need this for comparing exception errors and seeing what type they are
+import subprocess # For readOpenWindow()
 from process import Process
 from cpu import CPU
 from userlist import UserList
@@ -21,6 +22,7 @@ class Proc:
         self.readTotalMem()
         self.readcpuTimes()
         self.readProcListData()
+        self.readOpenWindows()
 
     # FIXME: skip looping and try to acess directly
     def readTotalMem(self):
@@ -141,6 +143,18 @@ class Proc:
             print("            End of loop            ")
             print("-----------------------------------")
 
+    def readOpenWindows(self):
+        ret = subprocess.run(['wmctrl', '-lp'],stdout=subprocess.PIPE,universal_newlines=True)
+        lines = re.split("(.+)\n", ret.stdout)
+        for line in lines:
+            # Split up the fields for each line
+            fields = re.match("(\w+)\s+(\w+)\s+(\w+)\s+(.[^\s]+)\s+(.+)", line)
+            if fields is not None:
+                pid = fields.group(3)
+                windowName = fields.group(5)
+                process = self.processList.get(pid)
+                if process is not None:
+                    process.windowName = windowName
 
 # FIXME: Delete when done project
 # For testing proc.py's data gathering

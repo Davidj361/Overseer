@@ -15,6 +15,7 @@ class Process:
         self.realUid = 0
         self.state = ""
         self.fullState = ""
+        self.windowName = ""
 
     # Force kill the process
     def endProcess(self):
