@@ -40,8 +40,8 @@ There are many more types of events than key presses and key releases, such as m
 Event handlers are in event loops. Event loops are embedded in applications themselves and/or in the operating system. Simple processes such as shell tools do not typically have event handlers, but many modern applications do. The typical structure of an event loop is that goes through the queue of events it has, does what it needs and then chooses to dispatch the event or not, afterwards waiting for more events. 
 
 The Qt framework offers a library that gives GUI functionality and is based in C++, but it also used in other languages such as Python where it has been ported.
-The Qt framework has an event loop and receives its events from X11, Wayland, etc.
-This is explained by Thiago Macieira in his powerpoint on the Qt event loop\cite{QtSlides}.
+The Qt framework has an event loop and receives its events from windowing systems such as X11 or Wayland.
+If you are interested in this topic, it is explained further by Thiago Macieira in his powerpoint on the Qt event loop\cite{QtSlides}.
 
 For this text, we use X11 as our window system.
 X11 is the base of the GUI system for Linux.
