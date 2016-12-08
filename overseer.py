@@ -91,7 +91,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # Another hack fix for keeping selection
         # It adds more strain to the thread
         if pid != -1:
-            for index in range(1, self.appTableView.model().rowCount() + 1):
+            for index in range(0, self.appTableView.model().rowCount()):
                 self.appTableView.selectRow(index)
                 if self.appTableView.selectionModel().selection().indexes()[2].data() == pid:
                     # If the previously selected item is found, leave
@@ -134,7 +134,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # Another hack fix for keeping selection
         # It adds more strain to the thread
         if pid != -1:
-            for index in range(1, self.tableView.model().rowCount() + 1):
+            for index in range(0, self.tableView.model().rowCount()):
                 self.tableView.selectRow(index)
                 if self.tableView.selectionModel().selection().indexes()[1].data() == pid:
                     # If the previously selected item is found, leave

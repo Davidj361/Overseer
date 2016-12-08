@@ -24,12 +24,11 @@ Note: Ctrl+Shift+Escape doesn't seem to work because shortcuts in Ubuntu with Es
 ## High Priority
 
 - Go through all the code and fix the FIXME comments
-- Fix the reselection bug of the first item in the list
+- Finish menubar
+- Give the program an icon
 
 ## Medium Priority
 
-- Give the program an icon
-- Finish menubar
 - Have the sort work properly
 - Fix process time collection to /proc/<PID>/ files where the user has no access to read
 - Fix segmentation fault that happens randomly when the program is closed (possibly to do with how Qt is setup and configured)
