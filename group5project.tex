@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\usepackage{hyperref}
 \title{Monitoring Memory and CPU Usage for Processes in Linux}
 \author{Jatczak, David \and McNabb, Trent}
 
@@ -21,11 +22,19 @@
 	The rest of this report is structured as follows: Section 2 presents information about calculating system resource usage by specific processes using the Linux '/proc/' file; Section 3 describes the result of the project, which is the program we have written; Section 4 evaluates the result of the project; Section 5 is the conclusion.
 	
 	\section{Background Information}
-	The the Linux '/proc/' file system stores information about processes and also other system information. Each process creates a directory in the '/proc/' file system. (reference the textbook). The directory is created at '/proc/pid/', where pid is the process id number. Each of those directories include a '/proc/pid/stat' file, and a '/proc/pid/statm'. In addition to the information about each process, there is also system information, including a '/proc/cpuinfo' file and a '/proc/meminfo' file.\\
+	The Linux '/proc/' file system stores information about processes and also other system information. Each process has a directory in the '/proc/' file system (reference the textbook). The directory is created at '/proc/[pid]/', where pid is the process identification number. Each of these directories include a 'stat' file, and a 'statm'. In addition to the information about each process, there is also system information, i.e. the '/proc/cpuinfo' file and the '/proc/meminfo' file.\\
 	The total memory used by a process can be calculated as follows:\\
 	The total system memory can be located:\\
 	The total amount of CPU usage by a process can be calculated as follows:\\
 	The total amount of total CPU capacity can be calculated as follows:\\
+	
+Shortcuts, also known as hotkeys, that give functionality to applications are typically handled by event handler. Whenever a user presses a key on an operating system, an event is made and sent out for the event handlers to handle. An event is more than a key press or key release and there are many types of events, but for this text we will be discussing key presses and releases. Event handlers are in event loops. Event loops are embedded in applications themselves and/or in the operating system. Simple processes such as shell tools do not typically have event handlers, but many modern applications do.
+
+The typical structure of an event loop is that goes through the queue of events it has, does what it needs and then chooses to dispatch the event or not, afterwards waiting for more events. 
+
+The Qt framework has an event loop. The Qt framework receives its events from X11. 
+
+
 	
 	\section{Result}
 	Result goes here.
@@ -49,6 +58,7 @@
 	\section{Contributions of Team Members}
 	
 	\begin{thebibliography}{3}
+	 \bibitem{QtSlides}\url{http://github.com/boostcon/cppnow_presentations_2013/blob/master/mon/qt_event_loop.pdf?raw=true}
 	\end{thebibliography}{}
 
 \end{document}
