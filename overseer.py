@@ -70,6 +70,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.appTableView.verticalHeader().setVisible(False)
         self.appTableView.horizontalHeader().setHighlightSections(False)
         self.appTableView.setColumnHidden(2, True)
+        self.appTableView.horizontalHeader().resizeSection(0, 650)
 
     def readApplicationsList(self):
         pid = self.getSelectedPID(self.appTableView, 2)
