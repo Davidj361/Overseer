@@ -34,11 +34,10 @@ class OverseerMainWindow(Ui_MainWindow):
 
         self.configProcessList()
         self.configApplicationsList()
-        self.readProcessList()
+        self.update()
 
         # This timer will act as timer for polling and for updating the GUI
         self.timer.timeout.connect(self.update)
-        self.timer.timeout.connect(self.updateView)
         # Every second
         self.timer.start(1000)
 
@@ -50,13 +49,13 @@ class OverseerMainWindow(Ui_MainWindow):
     # Update the data and view
     def update(self):
         self.proc.readData()
-        self.readProcessList()
+        self.updateView()
 
     # Update the view depending on what tab we are
     def updateView(self):
-        if self.tabWidget.currentIndex() == 0:
+        # if self.tabWidget.currentIndex() == 0:
             self.readApplicationsList()
-        elif self.tabWidget.currentIndex() == 1:
+        # elif self.tabWidget.currentIndex() == 1:
             self.readProcessList()
 
     def configApplicationsList(self):
@@ -68,25 +67,16 @@ class OverseerMainWindow(Ui_MainWindow):
         self.appTableView.horizontalHeader().setHighlightSections(False)
 
     def readApplicationsList(self):
-        1
         # pid = self.getSelectedProcessPID(self.tableView)
-        # # Erase all of the items in the model and re-add them
-        # self.processListModel.removeRows(0, self.processListModel.rowCount())
-        # self.tableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
-        # for i,(key,value) in enumerate(self.proc.processList.items()):
-        #     item = QtGui.QStandardItem(value.name)
-        #     self.processListModel.setItem(i,0, item)
-        #     item = QtGui.QStandardItem(value.pid)
-        #     self.processListModel.setItem(i,1, item)
-        #     item = QtGui.QStandardItem(self.proc.userList.getLoginname(value.realUid))
-        #     self.processListModel.setItem(i,2, item)
-        #     item = QtGui.QStandardItem(str(value.cpuPercentage))
-        #     self.processListModel.setItem(i,3, item)
-        #     item = QtGui.QStandardItem(value.ramPercentage)
-        #     self.processListModel.setItem(i,4, item)
-        # self.tableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
-        # #causes deselecting problem when sorting.
-        # #self.processListModel.sort(4, 1)
+        # Erase all of the items in the model and re-add them
+        self.applicationListModel.removeRows(0, self.applicationListModel.rowCount())
+        self.appTableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
+        for i,value in enumerate(self.proc.openWindows):
+            item = QtGui.QStandardItem(value[1])
+            self.applicationListModel.setItem(i,0, item)
+            item = QtGui.QStandardItem(value[2])
+            self.applicationListModel.setItem(i,1, item)
+        self.appTableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
     
         # # Another hack fix for keeping selection
         # # It adds more strain to the thread
@@ -145,6 +135,15 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # Returns -1 if no selection or PID couldn't be found, or returns PID
     def getSelectedProcessPID(self, tableView):
+        pid = -1
+        indexes = tableView.selectionModel().selection().indexes()
+        if len(indexes) != 0:
+            selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
+            pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
+        return pid
+
+    # Returns -1 if no selection or PID couldn't be found, or returns PID
+    def getSelectedApplicationPID(self, tableView):
         pid = -1
         indexes = tableView.selectionModel().selection().indexes()
         if len(indexes) != 0:

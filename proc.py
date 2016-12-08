@@ -14,6 +14,7 @@ class Proc:
         self.cpu = [] # cpu[0] should be the collective info on all CPUs
         self.totalMem = 0
         self.userList = UserList()
+        self.openWindows = []
         # Will hold our pids that are inside /proc/ as well as the process's information
         self.readData()
 
@@ -144,6 +145,7 @@ class Proc:
             print("-----------------------------------")
 
     def readOpenWindows(self):
+        self.openWindows = []
         ret = subprocess.run(['wmctrl', '-lp'],stdout=subprocess.PIPE,universal_newlines=True)
         lines = re.split("(.+)\n", ret.stdout)
         for line in lines:
@@ -155,6 +157,7 @@ class Proc:
                 process = self.processList.get(pid)
                 if process is not None:
                     process.windowName = windowName
+                    self.openWindows.append([pid, windowName, process.fullState])
 
 # FIXME: Delete when done project
 # For testing proc.py's data gathering
