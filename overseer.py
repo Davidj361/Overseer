@@ -46,6 +46,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.endTaskButton.clicked.connect(self._hEndTaskButton)
         self.switchToButton.clicked.connect(self._hSwitchToButton)
         self.newTaskButton.clicked.connect(self._hNewTaskButton)
+        self.newTaskButton.hide() # Unfinished feature
 
     def show(self):
         self.MainWindow.show()

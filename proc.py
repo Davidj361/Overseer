@@ -154,6 +154,9 @@ class Proc:
             if fields is not None:
                 pid = fields.group(3)
                 windowName = fields.group(5)
+                # Filter out ubuntu crap
+                if windowName == "Hud" or windowName == "unity-dash" or windowName == "unity-panel" or windowName == "unity-launcher" or windowName == "XdndCollectionWindowImp" or windowName == "Desktop":
+                    continue
                 process = self.processList.get(pid)
                 if process is not None:
                     process.windowName = windowName
