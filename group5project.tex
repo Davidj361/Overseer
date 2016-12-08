@@ -32,7 +32,17 @@ Shortcuts, also known as hotkeys, that give functionality to applications are ty
 
 The typical structure of an event loop is that goes through the queue of events it has, does what it needs and then chooses to dispatch the event or not, afterwards waiting for more events. 
 
-The Qt framework has an event loop. The Qt framework receives its events from X11. 
+The Qt framework offers a library in C++, and in other languages such as Python where it has been ported.
+The Qt framework has an event loop and receives its events from X11, Wayland, etc.
+This is explained by Thiago Macieira in his powerpoint on the Qt event loop\cite{QtSlides}.
+
+For this example, we will talk about X11.
+X11 is the base of the GUI system for Linux.
+It handles all the communication between the user input and other windows because it is the framework that other applications are working off.
+X11 has its own event loop, and is basically at the top of the hierarchy of event loops.
+
+To interact with X11's event loop, you require
+
 
 
 	
@@ -58,7 +68,7 @@ The Qt framework has an event loop. The Qt framework receives its events from X1
 	\section{Contributions of Team Members}
 	
 	\begin{thebibliography}{3}
-	 \bibitem{QtSlides}\url{http://github.com/boostcon/cppnow_presentations_2013/blob/master/mon/qt_event_loop.pdf?raw=true}
+	 \bibitem{QtSlides} Thiago Macieira - Qt Core Maintainer \url{http://github.com/boostcon/cppnow_presentations_2013/blob/master/mon/qt_event_loop.pdf?raw=true}
 	\end{thebibliography}{}
 
 \end{document}
