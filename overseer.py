@@ -42,6 +42,9 @@ class OverseerMainWindow(Ui_MainWindow):
         self.timer.start(1000)
 
         self.endProcessButton.clicked.connect(self._hEndProcessButton)
+        self.endTaskButton.clicked.connect(self._hEndTaskButton)
+        self.switchToButton.clicked.connect(self._hSwitchToButton)
+        self.newTaskButton.clicked.connect(self._hNewTaskButton)
 
     def show(self):
         self.MainWindow.show()
@@ -69,7 +72,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.appTableView.setColumnHidden(2, True)
 
     def readApplicationsList(self):
-        pid = self.getSelectedProcessPID(self.appTableView)
+        pid = self.getSelectedPID(self.appTableView, 2)
         # Erase all of the items in the model and re-add them
         self.applicationListModel.removeRows(0, self.applicationListModel.rowCount())
         self.appTableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
@@ -85,9 +88,9 @@ class OverseerMainWindow(Ui_MainWindow):
         # Another hack fix for keeping selection
         # It adds more strain to the thread
         if pid != -1:
-            for index in range(1, self.tableView.model().rowCount() + 1):
+            for index in range(1, self.appTableView.model().rowCount() + 1):
                 self.appTableView.selectRow(index)
-                if self.appTableView.selectionModel().selection().indexes()[1].data() == pid:
+                if self.appTableView.selectionModel().selection().indexes()[2].data() == pid:
                     # If the previously selected item is found, leave
                     return
             # If we are still here, the old item wasn't found, so deselect all
@@ -106,7 +109,7 @@ class OverseerMainWindow(Ui_MainWindow):
         self.tableView.horizontalHeader().setHighlightSections(False)
 
     def readProcessList(self):
-        pid = self.getSelectedProcessPID(self.tableView)
+        pid = self.getSelectedPID(self.tableView, 1)
         # Erase all of the items in the model and re-add them
         self.processListModel.removeRows(0, self.processListModel.rowCount())
         self.tableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
@@ -138,21 +141,12 @@ class OverseerMainWindow(Ui_MainWindow):
             
 
     # Returns -1 if no selection or PID couldn't be found, or returns PID
-    def getSelectedProcessPID(self, tableView):
+    def getSelectedPID(self, tableView, column):
         pid = -1
         indexes = tableView.selectionModel().selection().indexes()
         if len(indexes) != 0:
             selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
-            pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
-        return pid
-
-    # Returns -1 if no selection or PID couldn't be found, or returns PID
-    def getSelectedApplicationPID(self, tableView):
-        pid = -1
-        indexes = tableView.selectionModel().selection().indexes()
-        if len(indexes) != 0:
-            selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
-            pid = tableView.model().data(tableView.model().index(selection.row(), 2)) # Get our PID
+            pid = tableView.model().data(tableView.model().index(selection.row(), column)) # Get our PID
         return pid
 
     # Check if this is our first startup, if so, make the program start on startup
@@ -252,7 +246,7 @@ class OverseerMainWindow(Ui_MainWindow):
         # Summon the context menu
         action = tableView.menu.exec_(tableView.mapToGlobal(event.pos()))
         # tableView.menu.popup(QtGui.QCursor.pos()) # Another way of bringing up the menu
-        pid = self.getSelectedProcessPID(tableView)
+        pid = self.getSelectedPID(tableView)
         if pid == -1:
             return
         if action == openFileLocationAction:
@@ -275,10 +269,22 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # This should be a hidden function. Made it a member function so it could access proc
     def _hEndProcessButton(self):
-        pid = self.getSelectedProcessPID(self.tableView)
+        pid = self.getSelectedPID(self.tableView)
         ret = self.proc.processList[pid].endProcess()
         if ret == 1:
             QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
+
+    def _hEndTaskButton(self):
+        pid = self.getSelectedPID(self.appTableView, 2)
+        ret = self.proc.processList[pid].endTask()
+        if ret == 1:
+            QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
+
+    def _hSwitchToButton(self):
+        1
+
+    def _hNewTaskButton(self):
+        1
 
 if __name__ == "__main__":
     ui = OverseerMainWindow()
