@@ -24,7 +24,7 @@ class OverseerMainWindow(Ui_MainWindow):
 
         self.proc = Proc()
         self.processListModel = QtGui.QStandardItemModel(1, 6)
-        self.applicationListModel = QtGui.QStandardItemModel(1, 2)
+        self.applicationListModel = QtGui.QStandardItemModel(1, 3)
         self.timer = QtCore.QTimer()
         # See if this is our first startup. If so, we need to make a bash script to launch this program and add it to unity's shortcuts.
         self.setupShortcuts()
@@ -62,12 +62,14 @@ class OverseerMainWindow(Ui_MainWindow):
         # Set the labels for the columns
         self.applicationListModel.setHeaderData(0, 1, "Task")
         self.applicationListModel.setHeaderData(1, 1, "Status")
+        self.applicationListModel.setHeaderData(2, 1, "PID")
         self.appTableView.setModel(self.applicationListModel)
         self.appTableView.verticalHeader().setVisible(False)
         self.appTableView.horizontalHeader().setHighlightSections(False)
+        self.appTableView.setColumnHidden(2, True)
 
     def readApplicationsList(self):
-        # pid = self.getSelectedProcessPID(self.tableView)
+        pid = self.getSelectedProcessPID(self.appTableView)
         # Erase all of the items in the model and re-add them
         self.applicationListModel.removeRows(0, self.applicationListModel.rowCount())
         self.appTableView.setSortingEnabled(False) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
@@ -76,18 +78,20 @@ class OverseerMainWindow(Ui_MainWindow):
             self.applicationListModel.setItem(i,0, item)
             item = QtGui.QStandardItem(value[2])
             self.applicationListModel.setItem(i,1, item)
+            item = QtGui.QStandardItem(value[0])
+            self.applicationListModel.setItem(i,2, item)
         self.appTableView.setSortingEnabled(True) # This is a hack fix for getting sorting to stay when deleting all items and re-adding them
     
-        # # Another hack fix for keeping selection
-        # # It adds more strain to the thread
-        # if pid != -1:
-        #     for index in range(1, self.tableView.model().rowCount() + 1):
-        #         self.tableView.selectRow(index)
-        #         if self.tableView.selectionModel().selection().indexes()[1].data() == pid:
-        #             # If the previously selected item is found, leave
-        #             return
-        #     # If we are still here, the old item wasn't found, so deselect all
-        #     self.tableView.clearSelection()
+        # Another hack fix for keeping selection
+        # It adds more strain to the thread
+        if pid != -1:
+            for index in range(1, self.tableView.model().rowCount() + 1):
+                self.appTableView.selectRow(index)
+                if self.appTableView.selectionModel().selection().indexes()[1].data() == pid:
+                    # If the previously selected item is found, leave
+                    return
+            # If we are still here, the old item wasn't found, so deselect all
+            self.appTableView.clearSelection()
 
     def configProcessList(self):
         # Set the labels for the columns
@@ -148,7 +152,7 @@ class OverseerMainWindow(Ui_MainWindow):
         indexes = tableView.selectionModel().selection().indexes()
         if len(indexes) != 0:
             selection = tableView.selectionModel().selection().indexes()[0] # selection() seems to be our best bet on seeing what we right clicked on, could possibly be buggy
-            pid = tableView.model().data(tableView.model().index(selection.row(), 1)) # Get our PID
+            pid = tableView.model().data(tableView.model().index(selection.row(), 2)) # Get our PID
         return pid
 
     # Check if this is our first startup, if so, make the program start on startup

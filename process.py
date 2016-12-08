@@ -17,6 +17,20 @@ class Process:
         self.fullState = ""
         self.windowName = ""
 
+    # Ask the process nicely to terminate itself
+    def switchTo(self):
+        if self.windowName != "":
+            subprocess.run(['wmctrl', '-a', self.windowName],stdout=subprocess.DEVNULL,universal_newlines=True)
+
+    # Ask the process nicely to terminate itself
+    def endTask(self):
+        # Since the user field is still not implemented for the process, we'll just use another way of seeing if the user owns this file or not
+        if self.pid != 0 and self.path != "DENIED":
+            subprocess.run(['kill', self.pid], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return 0
+        else:
+            return 1 # Indicate an error
+
     # Force kill the process
     def endProcess(self):
         # Since the user field is still not implemented for the process, we'll just use another way of seeing if the user owns this file or not
