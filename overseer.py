@@ -293,7 +293,7 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # This should be a hidden function. Made it a member function so it could access proc
     def _hEndProcessButton(self):
-        pid = self.getSelectedPID(self.tableView)
+        pid = self.getSelectedPID(self.tableView, 1)
         ret = self.proc.processList[pid].endProcess()
         if ret == 1:
             QtWidgets.QMessageBox.about(self.MainWindow, "Warning", "You do not have permission to end this process.")
