@@ -29,21 +29,24 @@
 	The total amount of CPU usage by a process can be calculated as follows:\\
 	The total amount of total CPU capacity can be calculated as follows:\\
 	
-Shortcuts, also known as hotkeys, that give functionality to applications are typically handled by event handler. Whenever a user presses a key on an operating system, an event is made and sent out for the event handlers to handle. An event is more than a key press or key release and there are many types of events, but for this text we will be discussing key presses and releases. Event handlers are in event loops. Event loops are embedded in applications themselves and/or in the operating system. Simple processes such as shell tools do not typically have event handlers, but many modern applications do.
+Shortcuts, also known as hotkeys, that give functionality to applications are typically handled by an event handler.
+Whenever a user presses a key on an operating system, an event is made and sent out for the event handlers to handle.
+There are many more types of events than key presses and key releases, such as mouse movements, and GUI events.
+Event handlers are in event loops. Event loops are embedded in applications themselves and/or in the operating system. Simple processes such as shell tools do not typically have event handlers, but many modern applications do. The typical structure of an event loop is that goes through the queue of events it has, does what it needs and then chooses to dispatch the event or not, afterwards waiting for more events. 
 
-The typical structure of an event loop is that goes through the queue of events it has, does what it needs and then chooses to dispatch the event or not, afterwards waiting for more events. 
-
-The Qt framework offers a library in C++, and in other languages such as Python where it has been ported.
+The Qt framework offers a library that gives GUI functionality and is based in C++, but it also used in other languages such as Python where it has been ported.
 The Qt framework has an event loop and receives its events from X11, Wayland, etc.
 This is explained by Thiago Macieira in his powerpoint on the Qt event loop\cite{QtSlides}.
 
-For this example, we will talk about X11.
+For this text, we use X11 as our window system.
 X11 is the base of the GUI system for Linux.
 It handles all the communication between the user input and other windows because it is the framework that other applications are working off.
 X11 has its own event loop, and is basically at the top of the hierarchy of event loops.
 
-To interact with X11's event loop, you require
-
+To interact with X11's event loop, you require a library such as Xlib or XCB.
+XLib was made by the same company that created X11.
+XCB is a faster alternative to Xlib and is asynchronous.
+Both of these libraries communicate with X11 via binary because X11 uses a client-server design for its system.
 
 
 	
