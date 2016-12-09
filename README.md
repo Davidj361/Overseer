@@ -2,8 +2,8 @@
 ### A task manager GUI application for Linux
 ### Created by: Trent McNabb & David Jatczak
 
-![Alt text](preview1.png?raw=true)
-![Alt text](preview2.png?raw=true)
+![Alt text](img/preview1.png?raw=true)
+![Alt text](img/preview2.png?raw=true)
 
 # Requirements:
 - Ubuntu 16.04 (Tested on)
