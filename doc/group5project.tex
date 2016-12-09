@@ -60,6 +60,13 @@ XLib was made by the same company that created X11.
 XCB is a faster alternative to Xlib and is asynchronous.
 Both of these libraries communicate with X11 via binary because X11 uses a client-server design for its system.
 
+Unity is the desktop environment for Ubuntu, it operates with X11 (by default). Unity is able to use .desktop files to launch applications.
+These .desktop files are in plaintext and assign key-value pairs such as what command to execute.
+An option to launch the files upon startup is done by putting them in \path{~/.config/autostart}.
+Unity also has custom shortcuts available that can execute commands.
+The configuration of shortcuts are separate for each each user and are located in the user's /path{~/.config/dconf}.
+The configuration files are not plaintext, so the only way to change the configurations by terminal is through the command 'gsettings'.
+
 
 	
 \section{Result}
@@ -104,79 +111,71 @@ None of the other numbers are relevant.
 	\label{figCPUInfo}
 \end{figure}
 
-IMPORTANT: I made this sound like a story and it must not sound like a story. Make sure to transform it.
-
 Overseer is able to calculate its CPU usage and RAM usage through polling.
 The interval for polling is every second.
-Data is collected from all processes and the system.
-This may seem like a strain, but there should not be overhead from IO blocking as files in /proc/ are virtual files and not actual files on a disk. Virtual files should be stored only on RAM (or replace as main memory or whatever).
-With this, in theory you should be able to read all the info from /proc/ almost instantly.
-Thus having 1 second of polling should not be too bad for the process.
-When all this data is collected from /proc, we also perform our CPU and RAM usage calculations as well and also collect a list of users (at the start of the poll).
-Collecting a list of users gives overhead as there is possible IO blocking from reading /etc/passwd as this is not a virtual file but a file on the disk.
-Also obtaining window information through wmctrl might give overhead as well, and this data is collected in the poll cycle.
+The data that is used for polling is describing running processes and the operating system and is stored on \path{/proc}.
+Reading these files may seem like a strain, but there should not be any overhead from IO blocking since these files in \path{/proc} are virtual files and not actual files on a disk.
+Virtual files are stored only on RAM(Random-access Memory), also known as the main memory.
+In theory you should be able to read all the info from \path{/proc} almost instantly.
+Thus having 1 second of polling should not be too bad for a single threaded program.
 
-The original goal was to have Overseer launch upon startup and it would sit in the system tray, then it would show the window when the shortcuts ctrl+alt+del or ctrl+shift+esc was pressed.
-There, it would have an event handler for checking for the shortcuts key press events of either Ctrl+Alt+Del and Ctrl+Shift+Esc.
-If the key release event was detected for either shortcut before all 3 keys would get a keypress, the check for the shortcut would fail.
-Implementation for putting a .desktop file in ~/.conf/autostart did manage to get the program to launch on startup, but if the user were to log out and log back in, it would not launch again.
+When all this data is collected from \path{/proc}, we also perform our CPU and RAM usage calculations as well as collecting a list of users.
+The list of users is collected at the start of the poll cycle.
+Collecting a list of users gives overhead as there is possible IO blocking from reading \path{/etc/passwd} because this is not a virtual file but an actual file on the disk.
+Information on open windows in the window manager is collected through \path{wmctrl} and might give overhead as well depending on how wmctrl operates; window information is also collected in each poll cycle.
 
-However the main crux was the issue of reading events from X11 within the main Qt GUI thread.
+The original goal was to have Overseer launch upon startup and it would sit in the system tray, where it would show the window when the shortcuts \emph{Ctrl+Alt+Delete} or \emph{Ctrl+Shift+Escape} was pressed.
+Overseer would have used an event handler for detecting the shortcuts (key press events).
+If a key release event was detected for either key in a shortcut before all 3 keys having a key press event, the check for the shortcut would fail.
+Implementation for putting a .desktop file in \path{~/.conf/autostart} did manage to get the program to launch on startup. But if the user were to log out and log back in, it would not launch again.
 
-Utilizing xlib to read key presses was doable.
-The Qt framework only provided ways to add shortcuts if the Qt application itself was the focus (in focus).
-The Qt framework is unable to read key presses when the Qt application is minimized or not in focus.
-So another library was needed to read key presses, which led to Xlib.
+However, the main crux is the issue of reading events from X11 within the main thread of the application, which Qt operated off.
+The Qt framework only provided ways to have working shortcuts if the Qt application itself is in focus, meaning it is unable to read key presses when the Qt application is minimized or selected to receive user input.
+So another library was needed to read key press events, which led to Xlib.
 
-However, due to lack of knowledge with xlib and the incredibly bad documentation with the python version of xlib.(the documentation was incredibly bad \url{http://python-xlib.sourceforge.net/doc/html/index.html}, also download the package python3-xlib and look in \url{/usr/share/doc/python3-xlib/html} and look how about the documentation is)
+Utilizing Xlib to read key presses with Python 3.5.2 is possible.
+There is an example at \path{/usr/share/doc/python3-xlib/examples/record_demo.py} that illustrates reading events.
+However, due to our lack of knowledge with Xlib and the poor documentation \cite{badDocumentation} for the Python version of Xlib, the event loop could not be changed to our liking.
 
-It was difficult to understand the example in \url{/usr/share/doc/python3-xlib/examples/}
-\url{record_demo.py} as I had no idea how to reimplement the call back loop due to lack of documentation.
+Essentially the call back loop handles all the events coming from X11, then keeps calling itself to handle more events.
+This call back loop was not possible to implement in our application's main thread because Qt operates off the main thread.
+For example if \emph{time.sleep(5)} were to be executed in the main thread, the GUI would stop working all together and look frozen for 5 seconds.
+This call back loop was the only thing executing so Qt did not operate.
 
-Essentially a call back loop would handle all the events in X11, then keep calling itself to handle more events.
-It was not possible to implement this in the main Qt GUI thread because the GUI would stop working all together and look frozen.
-It was thought it would be possible to implement the xlib call back loop as another thread, a QThread, so a 2nd thread would check for the shortcuts while the main Qt GUI thread would run.
-However, xlib breaks (things and/or itself?) when used out of the main thread (I was told this by Thiago Macieira - Qt Core Maintainer on IRC).
-Also multithreading is not a wise idea with Qt because it would just add more overhead to Qt's event loop (there's a web page talking all about this, it's hosted by Qt I think).
+It was thought it would be possible to implement the Xlib call back loop in another thread, a QThread, where this 2nd thread would check for key press events with its callback loop while the main Qt GUI thread would run.
+However, it is incredibly dangerous when Xlib is used out of the main thread, as was explained to us by the Qt Core Maintainer Thiago Macieira over IRC.
+Also to add, multithreading is not a wise idea with Qt in general.
+The reason is you could have more overhead to Qt's main event loop if your threads were sending more events to the main thread's event loop. This is explained further by Qt's web page\cite{QtThreading}.
 
 Thus XCB was turned to instead, as another way to read events.
-A QAbstractNativeEventFilter was implemented to handle events straight from X11
-The goal was to read \url{xcb_generic_event_t} that was passed by Qt into our handler.
-However python does not recognize that type of data, and the PyQt5 library did not have an implementation of this data type either.
-So an XCB library was needed to understand the \url{xcb_generic_event_t} data being sent by Qt's framework.
-Due to our entire application being programmed in python 3.5.2, there were no decent libraries of XBC in python 3.5.2.
-It was made for python 2.x
-\url{https://xcb.freedesktop.org/XcbPythonBinding/}
-A crawl over google led to other XBC implementations in pythyon 3.x such as /url{https://github.com/samurai-x/samurai-x/tree/master/pyxcb/pyxcb} or \url{https://github.com/tych0/xcffib}.
-Both were failures in reading in \url{xcb_generic_event_t} for key presses even with some progress made into deciphering the event in \url{xcb_generic_event_t}.
-But there were many missing functions and constant values such as \url{XBC_MOUSE_PRESS}.
+A derived class of QAbstractNativeEventFilter, a class in the Qt framework, was created to handle the events coming from X11.
+The type \url{xcb_generic_event_t} is sent to \url{QAbstractNativeEventFilter} by Qt.
+Unfortunately, Python 3.5.2 does not recognize that type of data, and the PyQt5 library does not have an implementation of this data type either.
+An XCB library was needed to understand the \url{xcb_generic_event_t} data.
 
-Thus Ubuntu's custom shortcuts were used instead and we abandoned interacting with event handling. Overseer was made to no longer launch on startup, but instead a bash script was made instead where the Ubuntu shortcut would launch that, which in turn launched our Overseer application.
-The custom shortcuts are separate for each each user and are located in ~/.config/dconf
-The files are not plaintext, so the only way to change the configurations is through the terminal command 'gsettings'.
-The implementation was successful and got the functionality we wanted.
-However, the Ctrl+Shift+Esc shortcut does not work. The reason is in Ubuntu's shortcut manager not having Esc work as a shortcut at all\url{https://bugs.launchpad.net/ubuntu/+source/compiz/+bug/158855}.
+Due to our entire application being programmed in Python 3.5.2, there are no decent libraries of XBC available.
+Most libraries for XBC on Python are in the 2.x version of Python, e.g. \url{https://xcb.freedesktop.org/XcbPythonBinding/}.
+Search engine results led to other XBC implementations in Pythyon 3.x such as \url{https://github.com/samurai-x/samurai-x/tree/master/pyxcb/pyxcb} or \url{https://github.com/tych0/xcffib}.
+Both were unsuccessful for deciphering key press events from \url{xcb_generic_event_t} data.
+There was some progress in deciphering the data, but there are many missing functions and constant values such as \url{XBC_MOUSE_PRESS}. The work can be seen from \url{http://github.com/Davidj361/Comp3000Group5/tree/global-shortcuts} and \url{http://github.com/Davidj361/Comp3000Group5/tree/global-shortcuts-method2}
 
-For the applications tab, a 3rd party tool, wmctrl, was used to interact with windows in the window manager.
-It collects the windows showing in desktop and also gives the functionality for switching to the windows.
-Unfortunately it still collects junk windows like Unity's 'Hud', etc (check proc.py for the 'crap' comment for the list of them).
+Finally shortcut functionality was achieved with Unity's custom shortcuts.
+Our Overseer does not deal with any events in the code, it merely interacts with Unity's custom shortcuts system.
+Our application does not launch no longer on startup with a .desktop file, but instead launches from a bash file when a shortcut is pressed which in turn opens our Overseer application.
+\emph{Ctrl+Alt+Delete} or \emph{Ctrl+Shift+Escape}
+Unfortunately the \emph{Ctrl+Shift+Escape} does not work.
+The reason is because Ubuntu's shortcut manager does not work with \emph{Escape} as part of a shortcut, as illustrated in this bug report \url{https://bugs.launchpad.net/ubuntu/+source/compiz/+bug/158855}.
 
-There is a fully functional right click menu and the buttons work. (Write whatever you want about this since there weren't failures with this)
+The applications tab in Overseer utilizes \path{wmctrl}, a 3rd party tool, to interact with windows in the desktop environment.
+It collects information on windows showing in desktop environment and also gives the functionality for switching to a window.
+Unfortunately \path{wmctrl} also collects information on junk windows such as 'Hud', 'unity-dash', 'unity-panel', 'unity-launcher', and 'XdndCollectionWindowImp', even if it's not on the desktop environment's taskbar.
 
-Selections on the QtTableViews (process list \& applications list) had issues because python had no pointers.
-So it was hard to use Model View Controller design for this because we could not link our data from the Proc class as a model to a QtTableView.
-So when new data was grabbed, the whole QtTableView had to be erased and the selection had to reselected by iterating over the entire list in the table view and checking if the PID is the same as the selection before the update/poll.
-This adds overhead to the process.
-
-The Overseer application was programmed as single threaded, but Qt adds its own threads for whatever it needs to do.
-
-(Remark on how the entire application wasn't able to be finished)
-
-
-
-(\^ All the above can be seen from the branches global-shortcuts and global-shortcuts-method2)
-
-	
+Selections on the \emph{QtTableView}s in the process tab and applications tab has issues because Python does not have pointers.
+It is hard to utilize Model View Controller design, which is the basis of \emph{QtTableView}, because we cannot link our data straight from Overseer's Proc class as a model to a QtTableView.
+Instead, there's a poll cycle and new data is grabbed, all of the entries in each \emph{QtTableView} is erased and reinserted.
+However, this gets rid of our selection every poll cycle. 
+So Overseer remembers a \emph{PID} if there was a selection before the erase and reselects by iterating over the entire list in the \emph{QtTableView} looking for a matching PID, otherwise leaves no selection if not found.
+Sadly this adds overhead to the main thread.	
 	
 	\section{Evaluation}
 	Evaluation goes here.
@@ -202,6 +201,8 @@ The Overseer application was programmed as single threaded, but Qt adds its own 
 	\url{http://man7.org/linux/man-pages/man5/proc.5.html}
 	\bibitem{text}{Tanenbaum, A. S. (2015). \emph{Modern operating systems.}}
 	\bibitem{scoutBlog} Understanding Linux CPU stats \url{http://blog.scoutapp.com/articles/2015/02/24/understanding-linuxs-cpu-stats}
+	\bibitem{badDocumentation} \url{/usr/share/doc/python3-xlib/html} \& \url{http://python-xlib.sourceforge.net/doc/html/index.html}
+	\bibitem{QtThreading} \url{https://wiki.qt.io/Threads_Events_QObjects}
 	\end{thebibliography}{}
 
 \end{document}
