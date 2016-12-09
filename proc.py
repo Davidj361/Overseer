@@ -13,7 +13,7 @@ class Proc:
         self.processList = {} # Make a dictionary which is a hashtable
         self.cpu = [] # cpu[0] should be the collective info on all CPUs
         self.totalMem = 0
-        self.memStr = 0
+        self.memStr = ""
         self.userList = UserList()
         self.openWindows = []
         self.cpuStr = ""
