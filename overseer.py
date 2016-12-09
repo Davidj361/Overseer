@@ -58,10 +58,17 @@ class OverseerMainWindow(Ui_MainWindow):
 
     # Update the view depending on what tab we are
     def updateView(self):
+            self.readTotals()
         # if self.tabWidget.currentIndex() == 0:
             self.readApplicationsList()
         # elif self.tabWidget.currentIndex() == 1:
             self.readProcessList()
+    
+    def readTotals(self):
+        
+        
+        str = "Total CPU usage: " + self.proc.cpuStr + "%:  " + "Total Memory in Use: " + self.proc.memStr + "%:"
+        self.statusBar.showMessage(str)
 
     def configApplicationsList(self):
         # Set the labels for the columns

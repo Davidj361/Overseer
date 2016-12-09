@@ -13,8 +13,10 @@ class Proc:
         self.processList = {} # Make a dictionary which is a hashtable
         self.cpu = [] # cpu[0] should be the collective info on all CPUs
         self.totalMem = 0
+        self.memStr = 0
         self.userList = UserList()
         self.openWindows = []
+        self.cpuStr = ""
         # Will hold our pids that are inside /proc/ as well as the process's information
         self.readData()
 
@@ -35,6 +37,12 @@ class Proc:
                 for j, item in enumerate(items):
                     if items[j].isdigit():
                         self.totalMem = int(items[j])
+            elif i == 1:
+                items = re.split("[\t ]+", line)
+                for j, item in enumerate(items):
+                    if items[j].isdigit():
+                        freeMem = int(items[j])
+                        self.memStr = "{:.2f}".format((self.totalMem - freeMem)/(self.totalMem)*100)
             else:
                 break
         fd.close()
@@ -58,6 +66,8 @@ class Proc:
             #changed the calculation to manually got the period, which is the differnce between everything added up last time and everything added this time.
             #bufcpu[0].period = bufcpu[0].period - self.cpu[0].period
             bufcpu[0].period = bufcpu[0].usertime + bufcpu[0].systime + bufcpu[0].idletime - self.cpu[0].usertime - self.cpu[0].systime - self.cpu[0].idletime
+            cpuPercent = ((bufcpu[0].usertime + bufcpu[0].systime - self.cpu[0].usertime - self.cpu[0].systime)/ bufcpu[0].period)*100
+            self.cpuStr = "{:.2f}".format(cpuPercent)
         self.cpu = bufcpu
         
         
