@@ -1,8 +1,12 @@
 \documentclass[12pt]{article}
 \usepackage[ampersand]{easylist}
+\usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage[obeyspaces]{url}
 \usepackage{hyperref}
 \usepackage{graphicx}
+
 \title{Monitoring Memory and CPU Usage for Processes in Linux}
 \author{Jatczak, David \and McNabb, Trent}
 
@@ -13,34 +17,38 @@
 	\section{Introduction}
 	
 	\subsection{Context}
-	Addressing this issue requires knowledge of what information is relevant to the calculation of memory and CPU (Central Processing Unit) resources, and how to get that information. Specifically, knowledge of the Linux '/proc/' file is needed.
+	Addressing this issue requires knowledge of what information is relevant to the calculation of memory and CPU (Central Processing Unit) resources, and how to get that information. Specifically, knowledge of the Linux \path{/proc/} files is needed.
 	
 	\subsection{Problem Statement}
-	Computer users who are used to Windows might use Ctrl+Alt+Delete when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, and they might prefer to see the information in a Graphical User Interface (GUI). We would like to write a program that we can make accessible via the Ctrl-Alt-Delete keyboard shortcut that resembles the Windows Task Manager. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
+	Computer users who are used to Windows might use \emph{Ctrl+Alt+Delete} when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, and they might prefer to see the information in a GUI (Graphical User Interface). A program that is accessible via the \emph{Ctrl+Alt+Delete} keyboard shortcut that resembles the Windows Task Manager is needed. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
 	
 	\subsection{Result}
-	We have written a program that is called on our system using the Ctrl-Alt-Delete keyboard shortcut. The program uses a GUI to display the running processes and the percentage of CPU resources and memory used by each process. The program allows users to easily select and terminate processes.
+We have created a program that is called on our system using the \emph{Ctrl+Alt+Delete} keyboard shortcut. The program uses a GUI to display the running processes and the percentage of CPU resources and memory used by each process. The program allows users to easily select and terminate processes.
 	
 	\subsection{Outline}
-	The rest of this report is structured as follows: Section 2 presents background information, including information about calculating system resource usage by specific processes using the Linux '/proc/' file; Section 3 describes in detail the program that we have written, which is the result of this project; Section 4 evaluates the result of the project, primarily through a usability study; Section 5 is the conclusion.
+	The rest of this report is structured as follows: Section 2 presents background information, including information about calculating system resource usage by specific processes using the Linux \path{/proc/} file; Section 3 describes in detail the program that we have written, which is the result of this project; Section 4 evaluates the result of the project, primarily through a usability study; Section 5 is the conclusion.
 	
 	\section{Background Information}
-	The Linux '/proc/' file system stores information about processes and also other system information. Each process has a directory in the '/proc/' file system\cite[p. 792]{text}. The directory is created at '/proc/[pid]/', where pid is the process identification number. Each of these directories include a 'stat' file, a 'statm' file, and a '/status' file. In addition to the information about each process, there is also system information, i.e. the '/proc/cpuinfo' file and the '/proc/meminfo' file.\\
+	The Linux \path{/proc} file system stores information about processes and also other system information.
+Each process has a directory in the \path{/proc/} directory\cite[p. 792]{text}.
+The directory is created at \path{/proc/[PID]/}, where PID (Process Identifier) is the process identification number. Each of these directories include a 'stat' file, a 'statm' file, and a '/status' file. In addition to the information about each process, there is also system information, i.e. the \path{/proc/cpuinfo} file and the \path{/proc/meminfo} file.\\
 	The Resident Set Size in the number of pages that the system currently has in real memory.
-	If we multiply that by the page size, that gives the amount of RAM currently used by the process.
+	If we multiply that by the page size, that gives the amount of RAM (Random-access Memory) currently used by the process.
 	If we divide that by the total amount of memory used by the system, that will give us the percentage of system memory used by the process.
 	The calculation is:\\
-	(Resident Set Size * Page Size)/(Total System Memory.)\\
-	Information about the resident set size of a process can be found is '/proc/status/statm' \cite{manProc}.
-	Information about the total system memory can be found in '/proc/meminfo' \cite{manProc}.\\
+	
+	$$ \frac{\text{Resident Set Size} \times \text{Page Size}}{\text{Total System Memory}} $$
+	
+	Information about the resident set size of a process can be found is \path{/proc/status/statm} \cite{manProc}.
+	Information about the total system memory can be found in \path{/proc/meminfo} \cite{manProc}.\\
 
 A CPU can either be running or idle.
 If it is running, it can be running a user space program, or running the kernel \cite{scoutBlog}.
 If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.
 The percentage of CPU usage by a process is the amount of time that the CPU is running that specific process, divided by the Total CPU availability multiplied by 100.
 The percentage of total CPU usage is the amount of usage, divided the total CPU amount, multiplied by 100, where the amount of usage is the time running user space programs plus the time running kernel space programs.\\
-The amount of time that a process has been running in user mode can be found in '/proc/pid/stat'. \cite{manProc}
-The total time spent by the CPU running user space processeses and the amount of time running the kernel can be found in '/proc/stat' \cite{manProc}.\\
+The amount of time that a process has been running in user mode can be found in \path{/proc/PID/stat}. \cite{manProc}
+The total time spent by the CPU running user space processeses and the amount of time running the kernel can be found in \path{/proc/stat} \cite{manProc}.\\
 	
 	
 Shortcuts, also known as hotkeys, that give functionality to applications are typically handled by an event handler.
@@ -73,7 +81,7 @@ The configuration files are not plaintext, so the only way to change the configu
 	
 \section{Result}
 
-The GUI layout was created in QT Designer, which outputs a '.ui' file, which is an file in XML (Extensible Markup Language).
+The GUI layout was created in Qt Designer, which outputs a '.ui' file, which is an file in XML (Extensible Markup Language).
 That '.ui' file is compiled by PyQt5 into the files that run the GUI.
 For our program, those files were 'mainwindow.cpp', 'mainwindow.h', and 'mainwindow.cpp', and the python class that allows our program, 'Overseer.py', to interface with the gui, 'UImainwindow.py'.
 'Uimainwindow.py' has a class called Ui\_MainWindow that allows the creation of Ui\_MainWindow objects.
@@ -85,14 +93,14 @@ The OverseerMainWindow function calls the udpate function, which updates the dat
 It repeats this once every second.\\
 The Proc object stores the following data: a dictionary called processList, a UserList object called userList, from 'userlist.py', an integer called totalMem, and two lists called cpu and openWindows.\\
 The readData function runs the functions that populate each of those data members.
-readTotalMem gets the total memory usage from '/proc/meminfo/'.
+readTotalMem gets the total memory usage from \path{/proc/meminfo}.
 See Figure ~\ref{figTotalMem}.
 The circled data is the data stored as totalMem and the freeMem in the Proc object.
 \begin{figure}[h]
 	\centering
 	\textbf{Total Memory}\par\medskip
 	\includegraphics{totalMem}
-	\caption{Output of 'cat /proc/meminfo'}
+	\caption{Output of \url{cat /proc/meminfo}}
 	\label{figTotalMem}
 \end{figure}
 
@@ -109,7 +117,7 @@ None of the other numbers are relevant.
 	\centering
 	\textbf{CPU Information}\par\medskip
 	\includegraphics{totalCPU}
-	\caption{Output of 'cat /proc/stat'}
+	\caption{Output of \url{cat /proc/stat}}
 	\label{figCPUInfo}
 \end{figure}
 
@@ -117,7 +125,7 @@ Overseer is able to calculate its CPU usage and RAM usage through polling.
 The interval for polling is every second.
 The data that is used for polling is describing running processes and the operating system and is stored on \path{/proc}.
 Reading these files may seem like a strain, but there should not be any overhead from IO blocking since these files in \path{/proc} are virtual files and not actual files on a disk.
-Virtual files are stored only on RAM(Random-access Memory), also known as the main memory.
+Virtual files are stored only on RAM (Random-access Memory), also known as the main memory.
 In theory you should be able to read all the info from \path{/proc} almost instantly.
 Thus having 1 second of polling should not be too bad for a single threaded program.
 
@@ -223,6 +231,7 @@ For reference
 &&& Explaining Shortcuts, Events\&Event-Handlers\&Event-loops, X11, Unity, .desktop files
 && For the Results Section:
 &&& Describing polling, overhead in polling, the failures of utilizing event handling, Unity's shortcut functionality, wmctrl, difficulty with MVC in QTableView, selection logic in QTableView
+&& Proof read Trent's text
 & Placement of GUI elements
 & Reading htop's and top's source code to find RAM \& CPU usage calculations
 & Research in event handling
@@ -242,5 +251,42 @@ For more detail on contributions: \url{http://github.com/Davidj361/Comp3000Group
 	\bibitem{badDocumentation} \url{/usr/share/doc/python3-xlib/html} \& \url{http://python-xlib.sourceforge.net/doc/html/index.html}
 	\bibitem{QtThreading} \url{https://wiki.qt.io/Threads_Events_QObjects}
 	\end{thebibliography}{}
+	
+FIXME: DELETE BELOW
+
+•	Don’t generalize in your introduction, go straight to the point
+•	Should be understandable to another student at our level
+•	Acronyms should be defined, but don’t use the title, even things like IP. So first time used should be: Internet Protocol (IP)
+•	Do not tell a story, do not use future tense, same in past, unless the events must be told in the past.
+•	Use simple and short sentences, nothing like 3 lines for 1 sentence
+•	1.2 \& 1.3 are related
+•	 Number your sections
+•	1.1 – what happened before the problem \& your project
+•	1.3 – what we have actually achieved
+•	1.2 – The motivation, it’s not about us but about the software. Do not put your personal motivations, that can be as an appendix
+•	1.4 – To give to the reader an outline, an overview of the upcoming sections so section 2!
+•	Section 2, the target audience is the people in our class, people like us.
+Section 2
+•	Use your own algorithms and on your own examples
+•	Careful copy pasting diagrams, not even when cited. But you need to create your own diagrams. Also when copying figures, the original tends to have more elements.
+•	When talking about other people’s work (software) don’t be negative and destructive about their work
+•	Cite other’s work
+•	Only concepts are important, wording is not important, so quotations of people are not needed, put it in your own words.
+ 
+Section 3
+•	The core of the work
+•	Code is not needed, the design and the logic is what is needed
+•	If putting code, should be snippets and short
+•	You can use pseudocode, UML diagrams
+•	You will make claims. There are 2 types of claims, relevant and irrelevant claims. Also there needs to be evidence! Such as evidence for being fast or easy to use. What is it faster than? What software is it faster than?
+•	Be honest, even if it’s not easy for you. Do not hide it.
+•	Assume the reader is lazy, explain the contents of figures, i.e. write as if the reader is blind to the figure.
+Section 4
+•	Evaluation of our work
+•	For questionnaires, there’s a pre-quiz to get a background on testers. Also timed the user for doing each task. Final questionnaire is about the application.
+•	Use statistical math to support your claims
+Conclusion
+•	The same thing that’s repeated 3 times
+
 
 \end{document}
