@@ -55,8 +55,12 @@ class Proc:
         fd.close()
         # Get our interval from last scan
         if len(self.cpu) != 0:
-            bufcpu[0].period = bufcpu[0].period - self.cpu[0].period
+            #changed the calculation to manually got the period, which is the differnce between everything added up last time and everything added this time.
+            #bufcpu[0].period = bufcpu[0].period - self.cpu[0].period
+            bufcpu[0].period = bufcpu[0].usertime + bufcpu[0].systime + bufcpu[0].idletime - self.cpu[0].usertime - self.cpu[0].systime - self.cpu[0].idletime
         self.cpu = bufcpu
+        
+        
 
     # Collect PIDs and statuses from each pid
     def readProcListData(self):
