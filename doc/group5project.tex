@@ -1,4 +1,6 @@
 \documentclass[12pt]{article}
+\usepackage[ampersand]{easylist}
+\usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \title{Monitoring Memory and CPU Usage for Processes in Linux}
@@ -85,7 +87,7 @@ The Proc object stores the following data: a dictionary called processList, a Us
 The readData function runs the functions that populate each of those data members.
 readTotalMem gets the total memory usage from '/proc/meminfo/'.
 See Figure ~\ref{figTotalMem}.
-The circled data is the data stored as totalMem and the freeMem in the Proc object.
+The circled data is the data stored as totalMem.
 \begin{figure}[h]
 	\centering
 	\textbf{Total Memory}\par\medskip
@@ -194,6 +196,42 @@ Sadly this adds overhead to the main thread.
 	
 	\setcounter{secnumdepth}{0}
 	\section{Contributions of Team Members}
+
+\ListProperties(Hide=100, Hang=true, Progressive=3ex, Style*=-- ,
+Style2*=$\bullet$ ,Style3*=$\circ$ ,Style4*=\tiny$\blacksquare$ )
+
+For reference
+\begin{easylist}
+& Blah
+& Blah
+&& Blah
+&&& Blah
+&& Blah
+&&&& Blah
+&&&&& Blah
+\end{easylist}		
+	
+\subsection{David Jatczak}
+\begin{easylist}
+& All of following classes: Process, CPU , UserList, and UserEntry
+& For Proc class:
+&& Implemented readcpuTimes, readOpenWindow; obtaining: process times, process CPU usage percentage, process paths, their permissions, process state.
+& For OverseerMainWindow class:
+&& Implemented Right-click context menus, selection logic for QTableViews, button logic, setupgsettings, setupLaunchScript, and setupShortcuts
+& For the Project Report Document:
+&& For the Background Section:
+&&& Explaining Shortcuts, Events\&Event-Handlers\&Event-loops, X11, Unity, .desktop files
+&& For the Results Section:
+&&& Describing polling, overhead in polling, the failures of utilizing event handling, Unity's shortcut functionality, wmctrl, difficulty with MVC in QTableView, selection logic in QTableView
+& Placement of GUI elements
+& Reading htop's and top's source code to find RAM \& CPU usage calculations
+& Research in event handling
+\end{easylist}
+
+\hfill\break
+For more detail on contributions: \url{http://github.com/Davidj361/Comp3000Group5}
+	
+	
 	
 	\begin{thebibliography}{3}
 	\bibitem{QtSlides} Thiago Macieira - Qt Core Maintainer \url{http://github.com/boostcon/cppnow_presentations_2013/blob/master/mon/qt_event_loop.pdf?raw=true}
