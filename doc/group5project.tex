@@ -49,12 +49,12 @@ The directory is created at \path{/proc/[PID]/}, where PID (Process Identifier) 
 A CPU can either be running or idle.
 If it is running, it can be running a user space program, or running the kernel \cite{scoutBlog}.
 If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.
-In order to do the calculation, we need to poll at a given interval and take the difference between the new data and the old data ($\Delta$) for those three variables. The calculation for total CPU availability is:\\
+In order to do the calculation, we need to poll at a given interval and take the difference between the new data and the old data ($\Delta$) for those three variables. For example, if we say that the time running in user mode taken at $t_{1}$ is $U_{1}$, and the time running in user mode taken later at time $t_{2}$, then $$\Delta U = U_{2} - U_{1}$$. The calculation for total CPU availability is:\\
 $$ \Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode} + \Delta\text{Idle}$$
 The calculation for the process CPU percentage is:\\
-$$ \frac{\Delta\text{Process CPU user mode} + \Delta\text{Process Kernel mode}}{\text{Total CPU Availabilty}} \times 100 $$
+$$ \frac{\Delta\text{Process CPU user mode} + \Delta\text{Process Kernel mode}}{\text{Total CPU Availability}} \times 100 $$
 The calculation for total CPU usage is\\
-$$ \frac{\Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode}}{\text{Total CPU Availabilty}} \times 100 $$
+$$ \frac{\Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode}}{\text{Total CPU Availability}} \times 100 $$
 The amount of time that a process has been running in user mode and the amount of time that the process has been running in kernel mode can be found in \path{/proc/[PID]/stat}. \cite{manProc}
 The total time spent by the CPU running user space processes, the amount of time running the kernel and the amount of CPU Idle can be found in \path{/proc/stat} \cite{manProc}.\\
 	
