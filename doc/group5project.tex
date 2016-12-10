@@ -22,7 +22,7 @@
 	Addressing this issue requires knowledge of what information is relevant to the calculation of memory and CPU (Central Processing Unit) resources, and how to get that information. Specifically, knowledge of the Linux \path{/proc/} files is needed.
 	
 	\subsection{Problem Statement}
-	Computer users who are used to Windows might use \emph{Ctrl+Alt+Del} when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, or they might prefer to see the information in a GUI (Graphical User Interface ) that looks more like the Windows Task Manager. and they might prefer to see the information in a GUI (Graphical User Interface). A program that is accessible via the \emph{Ctrl+Alt+Del} keyboard shortcut that resembles the Windows Task Manager is needed. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
+	Computer users who are used to Windows might use \emph{Ctrl+Alt+Del} when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, or they might prefer to see the information in a GUI (Graphical User Interface) that looks more like the Windows Task Manager. and they might prefer to see the information in a GUI (Graphical User Interface). A program that is accessible via the \emph{Ctrl+Alt+Del} keyboard shortcut that resembles the Windows Task Manager is needed. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
 	
 	\subsection{Result}
 We have created a program that binds automatically to the \emph{Ctrl+Alt+Del} keyboard shortcut. The program uses a GUI that is similar to the Windows Task Manager to display the list of all processes, the percentage of CPU resources and memory used by each process, the Process ID Number of each process, and the user name running each process. The program allows users to easily select and terminate processes. The program also displays the total memory usage and the total CPU usage. The program also shows which applications are running, and allows the user to select and end a task.
@@ -48,13 +48,14 @@ The directory is created at \path{/proc/[PID]/}, where PID (Process Identifier) 
 
 A CPU can either be running or idle.
 If it is running, it can be running a user space program, or running the kernel \cite{scoutBlog}.
-If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.In order to do the calculation, we need to poll at a given interval and take the difference between the new data and the old data ($\Delta$) for those three variables. The calculation for total CPU availability is:\\
+If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.
+In order to do the calculation, we need to poll at a given interval and take the difference between the new data and the old data ($\Delta$) for those three variables. The calculation for total CPU availability is:\\
 $$ \Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode} + \Delta\text{Idle}$$
 The calculation for the process CPU percentage is:\\
 $$ \frac{\Delta\text{Process CPU user mode} + \Delta\text{Process Kernel mode}}{\text{Total CPU Availabilty}} \times 100 $$
 The calculation for total CPU usage is\\
 $$ \frac{\Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode}}{\text{Total CPU Availabilty}} \times 100 $$
-The amount of time that a process has been running in user mode and the amount of time that the process is running in kernel mode can be found in \path{/proc/PID/stat}. \cite{manProc}
+The amount of time that a process has been running in user mode and the amount of time that the process is running in kernel mode can be found in \path{/proc/[PID]/stat}. \cite{manProc}
 The total time spent by the CPU running user space processes, the amount of time running the kernel and the amount of CPU Idle can be found in \path{/proc/stat} \cite{manProc}.\\
 	
 	
@@ -81,8 +82,8 @@ Unity is the desktop environment for Ubuntu, it operates with X11 (by default). 
 These .desktop files are in plaintext and assign key-value pairs such as what command to execute.
 An option to launch the files upon startup is done by putting them in \path{~/.config/autostart}.
 Unity also has custom shortcuts available that can execute commands.
-The configuration of shortcuts are separate for each each user and are located in the user's /path{~/.config/dconf}.
-The configuration files are not plaintext, so the only way to change the configurations by terminal is through the command 'gsettings'.
+The configuration of shortcuts are separate for each each user and are located in the user's \path{~/.config/dconf}.
+The configuration files are not plaintext, so the only way to change the configurations by terminal is through the command \path{gsettings}.
 
 
 	
@@ -93,7 +94,7 @@ That '.ui' file is compiled by PyQt5 into the files that run the GUI.
 For our program, those files were 'mainwindow.cpp', 'mainwindow.h', and 'mainwindow.cpp', and the python class that allows our program, 'Overseer.py', to interface with the gui, 'UImainwindow.py'.
 'Uimainwindow.py' has a class called Ui\_MainWindow that allows the creation of Ui\_MainWindow objects.
 These files are all generated by the PyQt5 compiler, and any changes in them are made by changing and recompiling the '.ui' file.
-When the main function is run in 'Overseer.py', it creates an Ui\_MainWindow object, runs the OverseerMainWindow function and tells the Ui\_MainWindow object to show on the screen.\\
+When the main function is run in 'overseer.py', it creates an Ui\_MainWindow object, runs the OverseerMainWindow function and tells the Ui\_MainWindow object to show on the screen.\\
 The OverseerMainWindow function creates the the model for the table that holds the data so that the UI can display it.
 It creates an instance of the Proc class from 'proc.py'.
 The OverseerMainWindow function calls the update function, which updates the data by calling the readData function on the Proc object and then updates the view by calling the updateView function.
@@ -110,7 +111,8 @@ The circled data is the data stored as totalMem and the freeMem in the Proc obje
 	\caption{Output of \url{cat /proc/meminfo}}
 	\label{figTotalMem}
 \end{figure}
-The readcpuTimes function get CPU information from \path{/proc/stat}, creates a CPU object using the cpu.py file. the CPU object stores the amount of time the CPU has been running user space programs as usertime, the ammount of time the CPU has been running kernel mode as systime, and the amount of idle time as idletime. It also as a varable called period, to store the total CPU availability, as discussed in the background.\\
+The readcpuTimes function get CPU information from \path{/proc/stat}, creates a CPU object using the cpu.py file. the CPU object stores the amount of time the CPU has been running user space programs as usertime, the ammount of time the CPU has been running kernel mode as systime, and the amount of idle time as idletime.
+It also as a variable called period, to store the total CPU availability, as discussed in the background.\\
 See Figure ~\ref{figCPUInfo}.
 The circled data are the numbers put in the list cpu.
 This in the combined data for all processors in the system.
@@ -125,7 +127,9 @@ None of the other numbers are relevant for our purposes.\\
 	\caption{Output of \url{cat /proc/stat}}
 	\label{figCPUInfo}
 \end{figure}
-The readProcListData function gets the list of processes using the os library from python. It walks the list, and for every PID, it creates a Process object that stores 12 variables. The are 10 strings, called name, fullname, fullpath, path, rss, utime, stime, state, fullState and windowName. There are 4 numbers, called pid, realUid, ramPercentage and cpuPercentage. Is readProcList walks the list of processes, it gets information from \path{/proc/status} to populate the realUid field (See Figure ~\ref{figRealUid}, where the real user ID is circled in red), and \path{/proc/stat} to populate name, state, rss, utime, and stime. See Figure ~\ref{figProcPidStat}. The data for the following fields are circled in red: name and state, rss and utime and stime It checks processList, which is process list from the last poll in order to get the process previous utime and previous stime. It uses the new data and the old data to calculate the difference. It uses that information to calculate the process CPU percentage, which it stores in cpuPercentage. It uses rss and totalMem to calculate the process memory usage. It then tries to get populate fullpath out of \path{/proc/PID/exe}, which contains the actual pathname of the executed command \cite{manProc}. It is a symbolic link and needs to be deferenced. It then adds the Process object containing the data to a temporary variable. Once it has finished enumerating the entire list of processes, it makes the temporary variable containing all the data from this run through into the new the processList variable, so that it has the data that it needs the next time it is run.\\
+The readProcListData function gets the list of processes using the os library from python. It walks the list, and for every PID, it creates a Process object that stores 12 variables. The are 10 strings, called name, fullname, fullpath, path, rss, utime, stime, state, fullState and windowName. There are 4 numbers, called pid, realUid, ramPercentage and cpuPercentage. Is readProcList walks the list of processes, it gets information from \path{/proc/status} to populate the realUid field (See Figure ~\ref{figRealUid}, where the real user ID is circled in red), and \path{/proc/stat} to populate name, state, rss, utime, and stime. See Figure ~\ref{figProcPidStat}. The data for the following fields are circled in red: name and state, rss and utime and stime It checks processList, which is process list from the last poll in order to get the process previous utime and previous stime. It uses the new data and the old data to calculate the difference. It uses that information to calculate the process CPU percentage, which it stores in cpuPercentage. 
+It uses RSS (Resident Set Size) and totalMem to calculate the process memory usage.
+It then tries to get populate fullpath out of \path{/proc/PID/exe}, which contains the actual pathname of the executed command \cite{manProc}. It is a symbolic link and needs to be deferenced. It then adds the Process object containing the data to a temporary variable. Once it has finished enumerating the entire list of processes, it makes the temporary variable containing all the data from this run through into the new the processList variable, so that it has the data that it needs the next time it is run.\\
 The readOpenWindow uses a 3rd party command line tool called wmctrl\cite{wmtrl} to get the open windows, and then filters them so it doesn't show the Ubuntu windows driving the desktop.
 \begin{figure}[h]
 	\centering
@@ -234,7 +238,9 @@ Sadly this adds overhead to the main thread.
 	Memory, the \path{/proc/} file, processes, process IDs and system calls were all covered in the course and used to varying degrees in the making of this project.
 	
 	\subsection{Future Work}
-	There is significant further work that could be done on this project. The program currently fails to end processes that aren't owned by the user running the program. The process would have to run in kernel mode to do that. The description field on the process tab is currently blank. The sort is currently a string sort, that doesn't quite get the order right. While that isn't an issue for sorting by the username, or by the process name, it is a problem for numerical fields like the PID. For example, it would order 1, 2, 11 as 1,11,2. In addition, the program might be able to differentiate itself if could show graphs, or output charts. 
+	There is significant further work that could be done on this project.
+The program currently fails to end processes that aren't owned by the user running the program, but the process would have to run in kernel mode to do that.
+The description field on the process tab is currently blank. The sort is currently a string sort, that doesn't quite get the order right. While that isn't an issue for sorting by the username, or by the process name, it is a problem for numerical fields like the PID. For example, it would order 1, 2, 11 as 1,11,2. In addition, the program might be able to differentiate itself if could show graphs, or output charts. 
 	
 	
 	\setcounter{secnumdepth}{0}
