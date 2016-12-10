@@ -6,6 +6,8 @@
 \usepackage[obeyspaces]{url}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage[section]{placeins}
+
 
 \title{Monitoring Memory and CPU Usage for Processes in Linux}
 \author{Jatczak, David \and McNabb, Trent}
@@ -20,35 +22,40 @@
 	Addressing this issue requires knowledge of what information is relevant to the calculation of memory and CPU (Central Processing Unit) resources, and how to get that information. Specifically, knowledge of the Linux \path{/proc/} files is needed.
 	
 	\subsection{Problem Statement}
-	Computer users who are used to Windows might use \emph{Ctrl+Alt+Delete} when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, and they might prefer to see the information in a GUI (Graphical User Interface). A program that is accessible via the \emph{Ctrl+Alt+Delete} keyboard shortcut that resembles the Windows Task Manager is needed. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
+	Computer users who are used to Windows might use \emph{Ctrl+Alt+Del} when they wish to see which processes are running and how much of the system's resources those processes are consuming. They may not be comfortable using the terminal to run commands that would display that information, or they might prefer to see the information in a GUI (Graphical User Interface ) that looks more like the Windows Task Manager. and they might prefer to see the information in a GUI (Graphical User Interface). A program that is accessible via the \emph{Ctrl+Alt+Del} keyboard shortcut that resembles the Windows Task Manager is needed. It should allow for a clear and easy view of which processes are running and what resources each process is using. It should be easy to terminate a running process.
 	
 	\subsection{Result}
-We have created a program that is called on our system using the \emph{Ctrl+Alt+Delete} keyboard shortcut. The program uses a GUI to display the running processes and the percentage of CPU resources and memory used by each process. The program allows users to easily select and terminate processes.
+We have created a program that binds automatically to the \emph{Ctrl+Alt+Del} keyboard shortcut. The program uses a GUI that is similar to the Windows Task Manager to display the list of all processes, the percentage of CPU resources and memory used by each process, the Process ID Number of each process, and the user name running each process. The program allows users to easily select and terminate processes. The program also displays the total memory usage and the total CPU usage. The program also shows which applications are running, and allows the user to select and end a task.
 	
 	\subsection{Outline}
-	The rest of this report is structured as follows: Section 2 presents background information, including information about calculating system resource usage by specific processes using the Linux \path{/proc/} file; Section 3 describes in detail the program that we have written, which is the result of this project; Section 4 evaluates the result of the project, primarily through a usability study; Section 5 is the conclusion.
+	The rest of this report is structured as follows: Section 2 presents background information, including information about calculating system resource usage by specific processes using the Linux \path{/proc/} file; Section 3 describes in detail the program that we have written, which is the result of this project; Section 4 evaluates the result of the project, including with a usability study; Section 5 is the conclusion.
 	
 	\section{Background Information}
 	The Linux \path{/proc} file system stores information about processes and also other system information.
 Each process has a directory in the \path{/proc/} directory\cite[p. 792]{text}.
-The directory is created at \path{/proc/[PID]/}, where PID (Process Identifier) is the process identification number. Each of these directories include a 'stat' file, a 'statm' file, and a '/status' file. In addition to the information about each process, there is also system information, i.e. the \path{/proc/cpuinfo} file and the \path{/proc/meminfo} file.\\
+The directory is created at \path{/proc/[PID]/}, where PID (Process Identifier) is the process identification number. Each of these directories include a 'stat' file, a 'statm' file, and a 'status' file. In addition to the information about each process, there is also system information, i.e. the \path{/proc/cpuinfo} file and the \path{/proc/meminfo} file.\\
 	The Resident Set Size in the number of pages that the system currently has in real memory.
 	If we multiply that by the page size, that gives the amount of RAM (Random-access Memory) currently used by the process.
 	If we divide that by the total amount of memory used by the system, that will give us the percentage of system memory used by the process.
 	The calculation is:\\
-	
 	$$ \frac{\text{Resident Set Size} \times \text{Page Size}}{\text{Total System Memory}} $$
 	
-	Information about the resident set size of a process can be found is \path{/proc/status/statm} \cite{manProc}.
-	Information about the total system memory can be found in \path{/proc/meminfo} \cite{manProc}.\\
+	Information about the resident set size of a process can be found is \path{/proc/PID/statm} or\path{/proc/PID/stat} \cite{manProc}.
+	Information about the total system memory and total free memory can be found in \path{/proc/meminfo} \cite{manProc}.\\
+	To get the percentage of total memory in use by the system, the calculation is:\\
+	$$ \frac{\text{Total System Memory} - \text{Free Memory}}{\text{Total System Memory}} \times 100 $$
+	
 
 A CPU can either be running or idle.
 If it is running, it can be running a user space program, or running the kernel \cite{scoutBlog}.
-If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.
-The percentage of CPU usage by a process is the amount of time that the CPU is running that specific process, divided by the Total CPU availability multiplied by 100.
-The percentage of total CPU usage is the amount of usage, divided the total CPU amount, multiplied by 100, where the amount of usage is the time running user space programs plus the time running kernel space programs.\\
-The amount of time that a process has been running in user mode can be found in \path{/proc/PID/stat}. \cite{manProc}
-The total time spent by the CPU running user space processeses and the amount of time running the kernel can be found in \path{/proc/stat} \cite{manProc}.\\
+If you add the time it is running the kernel, plus the time it is running a user space program, plus the amount of time it is idle, you get what we will call the Total CPU availability.In order to do the calculation, we need to poll at a given interval and take the difference between the new data and the old data ($\Delta$) for those three variables. The calculation for total CPU availability is:\\
+$$ \Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode} + \Delta\text{Idle}$$
+The calculation for the process CPU percentage is:\\
+$$ \frac{\Delta\text{Process CPU user mode} + \Delta\text{Process Kernel mode}}{\text{Total CPU Availabilty}} \times 100 $$
+The calculation for total CPU usage is\\
+$$ \frac{\Delta\text{Running Userspace} + \Delta\text{Running Kernel Mode}}{\text{Total CPU Availabilty}} \times 100 $$
+The amount of time that a process has been running in user mode and the amount of time that the process is running in kernel mode can be found in \path{/proc/PID/stat}. \cite{manProc}
+The total time spent by the CPU running user space processes, the amount of time running the kernel and the amount of CPU Idle can be found in \path{/proc/stat} \cite{manProc}.\\
 	
 	
 Shortcuts, also known as hotkeys, that give functionality to applications are typically handled by an event handler.
@@ -89,13 +96,13 @@ These files are all generated by the PyQt5 compiler, and any changes in them are
 When the main function is run in 'Overseer.py', it creates an Ui\_MainWindow object, runs the OverseerMainWindow function and tells the Ui\_MainWindow object to show on the screen.\\
 The OverseerMainWindow function creates the the model for the table that holds the data so that the UI can display it.
 It creates an instance of the Proc class from 'proc.py'.
-The OverseerMainWindow function calls the udpate function, which updates the data by calling the readData function on the Proc object and then updates the view by calling the updateView function.
+The OverseerMainWindow function calls the update function, which updates the data by calling the readData function on the Proc object and then updates the view by calling the updateView function.
 It repeats this once every second.\\
-The Proc object stores the following data: a dictionary called processList, a UserList object called userList, from 'userlist.py', an integer called totalMem, and two lists called cpu and openWindows.\\
+The Proc object stores the following data: a dictionary called processList, a UserList object called userList, from 'userlist.py', an integer called totalMem, two strings called memStr and cpuStr, and two lists called cpu and openWindows.\\
 The readData function runs the functions that populate each of those data members.
-readTotalMem gets the total memory usage from \path{/proc/meminfo}.
+readTotalMem gets the total memory usage and free memory from \path{/proc/meminfo}. It stores the total memory in and uses the total memory and the free memory to calculate the total memory percentage. It converts it to a string and stores it in memStr.\\
 See Figure ~\ref{figTotalMem}.
-The circled data is the data stored as totalMem and the freeMem in the Proc object.
+The circled data is the data stored as totalMem and the freeMem in the Proc object.\\
 \begin{figure}[h]
 	\centering
 	\textbf{Total Memory}\par\medskip
@@ -103,22 +110,43 @@ The circled data is the data stored as totalMem and the freeMem in the Proc obje
 	\caption{Output of \url{cat /proc/meminfo}}
 	\label{figTotalMem}
 \end{figure}
-
-readCupTimes gets the CPU infomation from '/proc/stat'.
+The readcpuTimes function get CPU information from \path{/proc/stat}, creates a CPU object using the cpu.py file. the CPU object stores the amount of time the CPU has been running user space programs as usertime, the ammount of time the CPU has been running kernel mode as systime, and the amount of idle time as idletime. It also as a varable called period, to store the total CPU availability, as discussed in the background.\\
 See Figure ~\ref{figCPUInfo}.
 The circled data are the numbers put in the list cpu.
-The circled data are the numbers put in the list cpu.
 This in the combined data for all processors in the system.
-The first number is the time spent in user mode, and it is stored in cpu[0]
-The third number is the time spent in system mode, and it is stored in cpu[3]
-The fourth number is the time spent in idle, and it is stored in cpu[4].
-None of the other numbers are relevant.
+The first number is the time spent in user mode.
+The third number is the time spent in system mode.
+The fourth number is the time spent in idle.
+None of the other numbers are relevant for our purposes.\\
 \begin{figure}[h]
 	\centering
 	\textbf{CPU Information}\par\medskip
 	\includegraphics{totalCPU}
 	\caption{Output of \url{cat /proc/stat}}
 	\label{figCPUInfo}
+\end{figure}
+The readProcListData function gets the list of processes using the os library from python. It walks the list, and for every PID, it creates a Process object that stores 12 variables. The are 10 strings, called name, fullname, fullpath, path, rss, utime, stime, state, fullState and windowName. There are 4 numbers, called pid, realUid, ramPercentage and cpuPercentage. Is readProcList walks the list of processes, it gets information from \path{/proc/status} to populate the realUid field (See Figure ~\ref{figRealUid}, where the real user ID is circled in red), and \path{/proc/stat} to populate name, state, rss, utime, and stime. See Figure ~\ref{figProcPidStat}. The data for the following fields are circled in red: name and state, rss and utime and stime It checks processList, which is process list from the last poll in order to get the process previous utime and previous stime. It uses the new data and the old data to calculate the difference. It uses that information to calculate the process CPU percentage, which it stores in cpuPercentage. It uses rss and totalMem to calculate the process memory usage. It then tries to get populate fullpath out of \path{/proc/PID/exe}, which contains the actual pathname of the executed command \cite{manProc}. It is a symbolic link and needs to be deferenced. It then adds the Process object containing the data to a temporary variable. Once it has finished enumerating the entire list of processes, it makes the temporary variable containing all the data from this run through into the new the processList variable, so that it has the data that it needs the next time it is run.\\
+The readOpenWindow uses a 3rd party command line tool called wmctrl\cite{wmtrl} to get the open windows, and then filters them so it doesn't show the Ubuntu windows driving the desktop.
+\begin{figure}[h]
+	\centering
+	\textbf{Real User ID}\par\medskip
+	\includegraphics{realUid}
+	\caption{Output of 'cat /proc/status'}
+	\label{figRealUid}
+\end{figure}
+\begin{figure}[h]
+	\textbf{Data for Process Object}\par\medskip
+	\includegraphics{procPidStat}
+	\caption{Output of 'cat /proc/PID/stat'}
+	\label{figProcPidStat}
+\end{figure}
+\\To show that the program is getting accurate numbers for CPU and Memory usage, I have included Figure ~\ref{figCompare}.
+\begin{figure}[h]
+	\centering
+	\textbf{Comparison to Top}\par\medskip
+	\includegraphics{compareToTop}
+	\caption{Comparison to Output of Top}
+	\label{figCompare}
 \end{figure}
 
 Overseer is able to calculate its CPU usage and RAM usage through polling.
@@ -132,9 +160,9 @@ Thus having 1 second of polling should not be too bad for a single threaded prog
 When all this data is collected from \path{/proc}, we also perform our CPU and RAM usage calculations as well as collecting a list of users.
 The list of users is collected at the start of the poll cycle.
 Collecting a list of users gives overhead as there is possible IO blocking from reading \path{/etc/passwd} because this is not a virtual file but an actual file on the disk.
-Information on open windows in the window manager is collected through \path{wmctrl} and might give overhead as well depending on how wmctrl operates; window information is also collected in each poll cycle.
+Information on open windows in the window manager is collected through \path{wmctrl} and might give overhead as well depending on how wmctrl operates; window information is also collected in each poll cycle. 
 
-The original goal was to have Overseer launch upon startup and it would sit in the system tray, where it would show the window when the shortcuts \emph{Ctrl+Alt+Delete} or \emph{Ctrl+Shift+Escape} was pressed.
+The original goal was to have Overseer launch upon startup and it would sit in the system tray, where it would show the window when the shortcuts \emph{Ctrl+Alt+Del} or \emph{Ctrl+Shift+Escape} was pressed.
 Overseer would have used an event handler for detecting the shortcuts (key press events).
 If a key release event was detected for either key in a shortcut before all 3 keys having a key press event, the check for the shortcut would fail.
 Implementation for putting a .desktop file in \path{~/.conf/autostart} did manage to get the program to launch on startup. But if the user were to log out and log back in, it would not launch again.
@@ -172,11 +200,11 @@ There was some progress in deciphering the data, but there are many missing func
 Finally shortcut functionality was achieved with Unity's custom shortcuts.
 Our Overseer does not deal with any events in the code, it merely interacts with Unity's custom shortcuts system.
 Our application does not launch no longer on startup with a .desktop file, but instead launches from a bash file when a shortcut is pressed which in turn opens our Overseer application.
-\emph{Ctrl+Alt+Delete} or \emph{Ctrl+Shift+Escape}
+\emph{Ctrl+Alt+Del} or \emph{Ctrl+Shift+Escape}
 Unfortunately the \emph{Ctrl+Shift+Escape} does not work.
 The reason is because Ubuntu's shortcut manager does not work with \emph{Escape} as part of a shortcut, as illustrated in this bug report \url{https://bugs.launchpad.net/ubuntu/+source/compiz/+bug/158855}.
 
-The applications tab in Overseer utilizes \path{wmctrl}, a 3rd party tool, to interact with windows in the desktop environment.
+The applications tab in Overseer utilizes \path{wmctrl}\cite{wmtrl}, a 3rd party tool, to interact with windows in the desktop environment.
 It collects information on windows showing in desktop environment and also gives the functionality for switching to a window.
 Unfortunately \path{wmctrl} also collects information on junk windows such as 'Hud', 'unity-dash', 'unity-panel', 'unity-launcher', and 'XdndCollectionWindowImp', even if it's not on the desktop environment's taskbar.
 
@@ -186,27 +214,27 @@ Instead, there's a poll cycle and new data is grabbed, all of the entries in eac
 However, this gets rid of our selection every poll cycle. 
 So Overseer remembers a \emph{PID} if there was a selection before the erase and reselects by iterating over the entire list in the \emph{QtTableView} looking for a matching PID, otherwise leaves no selection if not found.
 Sadly this adds overhead to the main thread.	
-	
+
 	\section{Evaluation}
-	Evaluation goes here.
-\begin{figure}[h]
-	\centering
-	\textbf{Usability Study}\par\medskip
-	\includegraphics{usageStudy}
-	\caption{Usability Study}
-	\label{figUsage}
-\end{figure}
+	We created a program that shows total CPU usage, total memory usage, a list of all processes, individual process information, such as memory usage, cpu usage, PID and user ID. We did a usability study, asking the 5 questions, all on a scale of 1 (Very Hard) to 5 (Very East). The questions were how easy is it to launch the program, find out what process are running, see process memory usage, see process CPU usage, and kill a program. We found that on average, people gave the program a rating of 4.95, with a standard deviation of .23. See Figure ~\ref{figUsage}. Unfortunately, there are other programs that do this that are also easy to use, such as the Ubuntu system monitor. People who are more familiar with widows might appreciate that our program looks very similar to the old Windows Task Manager, and that it automatically binds to the \emph{Ctrl + Alt + Del} shortcut. However, the Ubuntu System Manager is also very usable, and a user could choose to bind it to the \emph{Ctrl + Alt + Del}. We did not make a program that is superior to the Ubuntu System Manager.
+	\begin{figure}[h!]
+		\centering
+		\textbf{Usability Study}\par\medskip
+		\includegraphics[scale=.7]{usageStudy}
+		\caption{Data from Usability Study}
+		\label{figUsage}
+	\end{figure}
 	
 	\section{Conclusion}
 	
 	\subsection{Summary}
-	Summary and highlights.
+	We created a program that gets information from \path{/proc/meminfo}, \path{/proc/stat}, \path{/proc/PID/status}, \path{/proc/stat} and uses that information to calculate the total CPU usage, the total memory usage, each individual process CPU usage, each individual process memory usage. the program also gets the process user name, and allows users to end processes. It also displays a list of running applications, and allows users to end tasks. The program resembles the windows task manager, and it automatically binds to the \emph{Ctrl-Alt-Del} keyboard shorcut. The program refreshes the data once every second.
 	
 	\subsection{Relevance}
-	Relevance with respect to the course topic.
+	Memory, the \path{/proc/} file, processes, process IDs and system calls were all covered in the course and used to varying degrees in the making of this project.
 	
 	\subsection{Future Work}
-	Question for TA -- future work in the field of this project, or ways that the project application itself could be continued on.
+	There is significant further work that could be done on this project. The program currently fails to end processes that aren't owned by the user running the program. The process would have to run in kernel mode to do that. The description field on the process tab is currently blank. The sort is currently a string sort, that doesn't quite get the order right. While that isn't an issue for sorting by the username, or by the process name, it is a problem for numerical fields like the PID. For example, it would order 1, 2, 11 as 1,11,2. In addition, the program might be able to differentiate itself if could show graphs, or output charts. 
 	
 	
 	\setcounter{secnumdepth}{0}
@@ -215,15 +243,28 @@ Sadly this adds overhead to the main thread.
 \ListProperties(Hide=100, Hang=true, Progressive=3ex, Style*=-- ,
 Style2*=$\bullet$ ,Style3*=$\circ$ ,Style4*=\tiny$\blacksquare$ )
 
-For reference
+\subsection{Trent McNabb}
 \begin{easylist}
-& Blah
-& Blah
-&& Blah
-&&& Blah
-&& Blah
-&&&& Blah
-&&&&& Blah
+	& For the Proc class:
+	&& altered readTotalMem to get free memory.
+	&& altered readcpuTimes to get the total CPU percentage.
+	&& altered readcpuTimes to get the process information to return the correct information.
+	& For the Overseer class:
+	&& Implemented readTotals to output total CPU percentage and Memory Percentage to the status bar 
+	& Original implementation of memory process percentage.
+	&& David turned this implementation into a much cleaner implementation, with proper object oriented design, in the classes in the final product.
+	& Implemented a method of killing process.
+	&& David's implementation was used in the final program, is it was the better implementation.
+	& Got the program to display the userID of each process.
+	&& David completed this implementation by matching the userIDs to the username and displaying that information.
+	& Designed the usability study.
+	& For the Project Report Document:
+	&& Sections 1, 4 and 5.
+	&& For background section:
+	&&& Information about the relevant CPU and memory calculations, and where to get the info from \path{/proc/}
+	&& For the Results section:
+	&&& Described the program logic, where the program gets the information to do the calculations, and how it does the calculations.
+	
 \end{easylist}		
 	
 \subsection{David Jatczak}
@@ -257,43 +298,8 @@ For more detail on contributions: \url{http://github.com/Davidj361/Comp3000Group
 	\bibitem{scoutBlog} Understanding Linux CPU stats \url{http://blog.scoutapp.com/articles/2015/02/24/understanding-linuxs-cpu-stats}
 	\bibitem{badDocumentation} \url{/usr/share/doc/python3-xlib/html} \& \url{http://python-xlib.sourceforge.net/doc/html/index.html}
 	\bibitem{QtThreading} \url{https://wiki.qt.io/Threads_Events_QObjects}
-	\end{thebibliography}{}
-	
-FIXME: DELETE BELOW
-
-•	Don’t generalize in your introduction, go straight to the point
-•	Should be understandable to another student at our level
-•	Acronyms should be defined, but don’t use the title, even things like IP. So first time used should be: Internet Protocol (IP)
-•	Do not tell a story, do not use future tense, same in past, unless the events must be told in the past.
-•	Use simple and short sentences, nothing like 3 lines for 1 sentence
-•	1.2 \& 1.3 are related
-•	 Number your sections
-•	1.1 – what happened before the problem \& your project
-•	1.3 – what we have actually achieved
-•	1.2 – The motivation, it’s not about us but about the software. Do not put your personal motivations, that can be as an appendix
-•	1.4 – To give to the reader an outline, an overview of the upcoming sections so section 2!
-•	Section 2, the target audience is the people in our class, people like us.
-Section 2
-•	Use your own algorithms and on your own examples
-•	Careful copy pasting diagrams, not even when cited. But you need to create your own diagrams. Also when copying figures, the original tends to have more elements.
-•	When talking about other people’s work (software) don’t be negative and destructive about their work
-•	Cite other’s work
-•	Only concepts are important, wording is not important, so quotations of people are not needed, put it in your own words.
- 
-Section 3
-•	The core of the work
-•	Code is not needed, the design and the logic is what is needed
-•	If putting code, should be snippets and short
-•	You can use pseudocode, UML diagrams
-•	You will make claims. There are 2 types of claims, relevant and irrelevant claims. Also there needs to be evidence! Such as evidence for being fast or easy to use. What is it faster than? What software is it faster than?
-•	Be honest, even if it’s not easy for you. Do not hide it.
-•	Assume the reader is lazy, explain the contents of figures, i.e. write as if the reader is blind to the figure.
-Section 4
-•	Evaluation of our work
-•	For questionnaires, there’s a pre-quiz to get a background on testers. Also timed the user for doing each task. Final questionnaire is about the application.
-•	Use statistical math to support your claims
-Conclusion
-•	The same thing that’s repeated 3 times
+	\bibitem{wmtrl}Styblo, Tomas. \emph{WMCTRL}. Documentation at \url{http://tripie.sweb.cz/utils/wmctrl/}. Available under the GNU GPL.
+	\end{thebibliography}
 
 
 \end{document}
