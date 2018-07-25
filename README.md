@@ -1,6 +1,6 @@
 # Comp300Group5
 ### A task manager GUI application for Linux
-### Created by: Trent McNabb & David Jatczak
+### Created by: Trent McNabb & David J
 
 ![Alt text](img/preview1.png?raw=true)
 ![Alt text](img/preview2.png?raw=true)
