@@ -1,4 +1,4 @@
-# Comp300Group5
+# Overseer
 ### A task manager GUI application for Linux
 ### Created by: Trent McNabb & David J
 
